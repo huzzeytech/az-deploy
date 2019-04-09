@@ -22,10 +22,6 @@
             "type": "string",
             "defaultValue": "yubi-vnet"
         },
-        "addressPrefixes": {
-            "type": "array",
-            "defaultValue": "10.0.16.0/24"
-        },
         "publicIpAddressName": {
             "type": "string",
             "defaultValue": "dc1-ip"
@@ -142,7 +138,9 @@
             "location": "[parameters('location')]",
             "properties": {
                 "addressSpace": {
-                    "addressPrefixes": "[parameters('addressPrefixes')]"
+                    "addressPrefixes": [
+                        "10.0.16.0/24"
+                    ]
                 },
                 "subnets": [
                     {
