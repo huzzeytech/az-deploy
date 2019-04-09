@@ -193,25 +193,7 @@
                     },
                     "imageReference": {
                         "id": "/subscriptions/5c134fa3-e537-4bb7-9857-6f3cad39a5cb/resourceGroups/yubi-arm/providers/Microsoft.Compute/images/dc1-image-20190408195059"
-                    },
-                    "copy": [
-                        {
-                            "name": "dataDisks",
-                            "count": 1,
-                            "input": [
-                                {
-                                    "lun": 0,
-                                    "createOption": "attach",
-                                    "caching": "ReadOnly",
-                                    "writeAcceleratorEnabled": false,
-                                    "id": null,
-                                    "name": "dc1_DataDisk_0",
-                                    "storageAccountType": null,
-                                    "diskSizeGB": null
-                                }
-                            ]
-                        }
-                    ]
+                    }
                 },
                 "networkProfile": {
                     "networkInterfaces": [
