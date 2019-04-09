@@ -176,7 +176,6 @@
             "apiVersion": "2018-06-01",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "managedDiskResources",
                 "[concat('Microsoft.Network/networkInterfaces/', parameters('networkInterfaceName'))]",
                 "[concat('Microsoft.Storage/storageAccounts/', parameters('diagnosticsStorageAccountName'))]"
             ],
