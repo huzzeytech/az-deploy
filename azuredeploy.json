@@ -4,82 +4,73 @@
     "parameters": {
         "location": {
             "type": "string",
-            "defaultValue": ""
+            "defaultValue": "eastus"
         },
         "networkInterfaceName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "dc1nic"
         },
         "networkSecurityGroupName": {
-            "type": "string"
-        },
-        "networkSecurityGroupRules": {
-            "type": "array"
+            "type": "string",
+            "defaultValue": "dc1-nsg"
         },
         "subnetName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "default"
         },
         "virtualNetworkName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "yubi-vnet"
         },
         "addressPrefixes": {
-            "type": "array"
-        },
-        "subnets": {
-            "type": "array"
+            "type": "array",
+            "defaultValue": "10.0.16.0/24"
         },
         "publicIpAddressName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "dc1-ip"
         },
         "publicIpAddressType": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "Dynamic"
         },
         "publicIpAddressSku": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "Basic"
         },
         "virtualMachineName": {
-            "type": "string"
-        },
-        "virtualMachineRG": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "dc1"
         },
         "osDiskType": {
-            "type": "string"
-        },
-        "dataDisks": {
-            "type": "array"
-        },
-        "dataDiskResources": {
-            "type": "array"
+            "type": "string",
+            "defaultValue": "Premium_LRS"
         },
         "virtualMachineSize": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "Standard_DS1_v2"
         },
         "adminUsername": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "BadAdmin"
         },
         "adminPassword": {
-            "type": "secureString"
+            "type": "secureString",
+            "defaultValue": "BadAdminPass123"
         },
         "diagnosticsStorageAccountName": {
-            "type": "string"
-        },
-        "diagnosticsStorageAccountId": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "GEN-UNIQUE"
         },
         "diagnosticsStorageAccountType": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "Standard_LRS"
         },
         "diagnosticsStorageAccountKind": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "Storage"
         }
     },
-    "_artifactsLocation": {
-        "type": "string",
-        "metadata": {
-          "description": "The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
-        },
-        "defaultValue": "https://raw.githubusercontent.com/huzzeytech/az-deploy/tree/master/"
-  },
     "variables": {
         "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
         "vnetId": "[resourceId(resourceGroup().name,'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
@@ -125,7 +116,20 @@
             "apiVersion": "2018-08-01",
             "location": "[parameters('location')]",
             "properties": {
-                "securityRules": "[parameters('networkSecurityGroupRules')]"
+                "securityRules": [
+                    {
+                        "name": "RDP",
+                        "properties": {
+                        "priority": 300,
+                        "protocol": "TCP",
+                        "access": "Allow",
+                        "direction": "Inbound",
+                        "sourceAddressPrefix": "*",
+                        "sourcePortRange": "*",
+                        "destinationAddressPrefix": "*",
+                        "destinationPortRange": "3389"
+                    }
+                }]
             },
             "tags": {
                 "Project": "yubi-azure"
@@ -140,7 +144,14 @@
                 "addressSpace": {
                     "addressPrefixes": "[parameters('addressPrefixes')]"
                 },
-                "subnets": "[parameters('subnets')]"
+                "subnets": [
+                    {
+                        "name": "default",
+                        "properties": {
+                            "addressPrefix": "10.0.16.0/24"
+                        }
+                    }
+                ]
             },
             "tags": {
                 "Project": "yubi-azure"
@@ -188,18 +199,19 @@
                     "copy": [
                         {
                             "name": "dataDisks",
-                            "count": "[length(parameters('dataDisks'))]",
-                            "input": {
-                                "lun": "[parameters('dataDisks')[copyIndex('dataDisks')].lun]",
-                                "createOption": "[parameters('dataDisks')[copyIndex('dataDisks')].createOption]",
-                                "caching": "[parameters('dataDisks')[copyIndex('dataDisks')].caching]",
-                                "writeAcceleratorEnabled": "[parameters('dataDisks')[copyIndex('dataDisks')].writeAcceleratorEnabled]",
-                                "diskSizeGB": "[parameters('dataDisks')[copyIndex('dataDisks')].diskSizeGB]",
-                                "managedDisk": {
-                                    "id": "[coalesce(parameters('dataDisks')[copyIndex('dataDisks')].id, if(equals(parameters('dataDisks')[copyIndex('dataDisks')].name, json('null')), json('null'), resourceId('Microsoft.Compute/disks', parameters('dataDisks')[copyIndex('dataDisks')].name)))]",
-                                    "storageAccountType": "[parameters('dataDisks')[copyIndex('dataDisks')].storageAccountType]"
+                            "count": 1,
+                            "input": [
+                                {
+                                    "lun": 0,
+                                    "createOption": "attach",
+                                    "caching": "ReadOnly",
+                                    "writeAcceleratorEnabled": false,
+                                    "id": null,
+                                    "name": "dc1_DataDisk_0",
+                                    "storageAccountType": null,
+                                    "diskSizeGB": null
                                 }
-                            }
+                            ]
                         }
                     ]
                 },

@@ -5,28 +5,14 @@
         "location": {
             "value": "eastus"
         },
+        "env": {
+            "value": "testing"
+        },
         "networkInterfaceName": {
             "value": "dc1223"
         },
         "networkSecurityGroupName": {
             "value": "dc1-nsg"
-        },
-        "networkSecurityGroupRules": {
-            "value": [
-                {
-                    "name": "RDP",
-                    "properties": {
-                        "priority": 300,
-                        "protocol": "TCP",
-                        "access": "Allow",
-                        "direction": "Inbound",
-                        "sourceAddressPrefix": "*",
-                        "sourcePortRange": "*",
-                        "destinationAddressPrefix": "*",
-                        "destinationPortRange": "3389"
-                    }
-                }
-            ]
         },
         "subnetName": {
             "value": "default"
@@ -61,9 +47,6 @@
         "virtualMachineName": {
             "value": "dc1"
         },
-        "virtualMachineRG": {
-            "value": "yubi-arm"
-        },
         "osDiskType": {
             "value": "Premium_LRS"
         },
@@ -78,18 +61,6 @@
                     "name": "dc1_DataDisk_0",
                     "storageAccountType": null,
                     "diskSizeGB": null
-                }
-            ]
-        },
-        "dataDiskResources": {
-            "value": [
-                {
-                    "name": "dc1_DataDisk_0",
-                    "diskSizeGB": 60,
-                    "sku": "Premium_LRS",
-                    "creationData": {
-                        "createOption": "empty"
-                    }
                 }
             ]
         },
