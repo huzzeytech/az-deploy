@@ -2,6 +2,9 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "envid": {
+            "type": "string"
+        },
         "location": {
             "type": "string",
             "defaultValue": "eastus"
@@ -54,10 +57,6 @@
             "type": "secureString",
             "defaultValue": "BadAdminPass123"
         },
-        "diagnosticsStorageAccountName": {
-            "type": "string",
-            "defaultValue": "GEN-UNIQUE"
-        },
         "diagnosticsStorageAccountType": {
             "type": "string",
             "defaultValue": "Standard_LRS"
@@ -70,7 +69,10 @@
     "variables": {
         "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
         "vnetId": "[resourceId(resourceGroup().name,'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
-        "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]"
+        "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
+        "vmname": "[concat(parameters('envid'), parameters('virtualMachineName'))]",
+        "pubipId": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]",
+        "storageName": "[concat('storage', uniqueString(resourceGroup().id))]"
     },
     "resources": [
         {
@@ -177,7 +179,7 @@
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[concat('Microsoft.Network/networkInterfaces/', parameters('networkInterfaceName'))]",
-                "[concat('Microsoft.Storage/storageAccounts/', parameters('diagnosticsStorageAccountName'))]"
+                "[concat('Microsoft.Storage/storageAccounts/', variables('storageName'))]"
             ],
             "properties": {
                 "hardwareProfile": {
@@ -191,7 +193,7 @@
                         }
                     },
                     "imageReference": {
-                        "id": "/subscriptions/5c134fa3-e537-4bb7-9857-6f3cad39a5cb/resourceGroups/yubi-arm/providers/Microsoft.Compute/images/dc1-image-20190408195059"
+                        "id": "/subscriptions/5c134fa3-e537-4bb7-9857-6f3cad39a5cb/resourceGroups/infra/providers/Microsoft.Compute/images/dc-image-20190411141528"
                     }
                 },
                 "networkProfile": {
@@ -202,7 +204,7 @@
                     ]
                 },
                 "osProfile": {
-                    "computerName": "[parameters('virtualMachineName')]",
+                    "computerName": "[variables('vmname')]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]",
                     "windowsConfiguration": {
@@ -213,7 +215,7 @@
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
                         "enabled": true,
-                        "storageUri": "[concat('https://', parameters('diagnosticsStorageAccountName'), '.blob.core.windows.net/')]"
+                        "storageUri": "[concat('https://', variables('storageName'), '.blob.core.windows.net/')]"
                     }
                 }
             },
@@ -222,7 +224,7 @@
             }
         },
         {
-            "name": "[parameters('diagnosticsStorageAccountName')]",
+            "name": "[variables('storageName')]",
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2018-07-01",
             "location": "[parameters('location')]",
@@ -233,6 +235,21 @@
             },
             "tags": {
                 "Project": "yubi-azure"
+            }
+        },
+        {
+            "name": "[concat('yubi.fun/', parameters('envid'))]",
+            "type": "Microsoft.Network/dnsZones/A",
+            "apiVersion": "2018-05-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]"
+            ],
+            "properties": {
+            "metadata": {},
+            "TTL": 3600,
+            "targetResource": {
+                "id": "[variables('pubipId')]"
+            }
             }
         }
     ],
