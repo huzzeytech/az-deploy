@@ -249,7 +249,7 @@
             "apiVersion": "2018-05-01",
             "dependsOn": [
                 "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]",
-                "[resourceId('Microsoft.Network/dnszones', parameters('dnszones_yubi.fun_name'))]"
+                "[concat('Microsoft.Network/publicIpAddresses/', parameters('publicIpAddressName'))]"
             ],
             "properties": {
             "metadata": {},
