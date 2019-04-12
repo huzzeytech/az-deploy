@@ -72,7 +72,7 @@
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
         "vmname": "[concat(parameters('envid'), parameters('virtualMachineName'))]",
         "pubipId": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]",
-        "storageName": "[concat('storage-', parameters('envid'))]",
+        "storageName": "[concat('yubisa', parameters('envid'))]",
         "scriptParameters": "[concat('-CustomDomain ', parameters('envid'))]",
         "scriptFileName": "init-domain.ps1"
     },
@@ -257,7 +257,7 @@
         {
             "apiVersion": "2018-06-01",
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "initialize",
+            "name": "scripts/config-app",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
