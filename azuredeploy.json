@@ -256,7 +256,7 @@
         },
         {
             "apiVersion": "2018-06-01",
-            "type": "extensions",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "initialize",
             "location": "[resourceGroup().location]",
             "dependsOn": [
