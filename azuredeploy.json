@@ -72,7 +72,7 @@
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
         "vmname": "[concat(parameters('envid'), parameters('virtualMachineName'))]",
         "pubipId": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]",
-        "storageName": "[concat('storage', uniqueString(resourceGroup().id))]",
+        "storageName": "[concat('storage-', parameters('envid'))]",
         "scriptParameters": "[concat('-CustomDomain ', parameters('envid'))]",
         "scriptFileName": "init-domain.ps1"
     },
@@ -260,7 +260,7 @@
             "name": "initialize",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
             ],
             "tags": {
                 "displayName": "initialize-app"
