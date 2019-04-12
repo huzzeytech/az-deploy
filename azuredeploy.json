@@ -240,7 +240,7 @@
             }
         },
         {
-            "name": "[concat(parameters('envid'), 'dnsalias')]",
+            "name": "[concat('dnszones_yubi.fun_name/', parameters('envid'))]",
             "type": "Microsoft.Network/dnsZones/A",
             "apiVersion": "2018-05-01",
             "dependsOn": [
@@ -256,7 +256,7 @@
         },
         {
             "apiVersion": "2018-06-01",
-            "name": "config-app",
+            "name": "[concat('scriptrunner/', parameters('envid'))]",
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "location": "[resourceGroup().location]",
             "dependsOn": [
