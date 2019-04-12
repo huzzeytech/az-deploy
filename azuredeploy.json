@@ -1,5 +1,5 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "envid": {
@@ -119,7 +119,7 @@
                         "name": "RDP",
                         "properties": {
                         "priority": 300,
-                        "protocol": "TCP",
+                        "protocol": "Tcp",
                         "access": "Allow",
                         "direction": "Inbound",
                         "sourceAddressPrefix": "*",
@@ -187,7 +187,7 @@
                 },
                 "storageProfile": {
                     "osDisk": {
-                        "createOption": "fromImage",
+                        "createOption": "FromImage",
                         "managedDisk": {
                             "storageAccountType": "[parameters('osDiskType')]"
                         }
@@ -250,6 +250,34 @@
             "targetResource": {
                 "id": "[variables('pubipId')]"
             }
+            }
+        },
+        {
+            "apiVersion": "2018-06-01",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "initialize",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+            ],
+            "tags": {
+                "displayName": "initialize-app"
+            },
+            "properties": {
+                "publisher": "Microsoft.Compute",
+                "type": "CustomScriptExtension",
+                "typeHandlerVersion": "1.9",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "fileUris": [
+                        "script location"
+                    ]
+                },
+                "protectedSettings": {
+                    "commandToExecute": "myExecutionCommand",
+                    "storageAccountName": "myStorageAccountName",
+                    "storageAccountKey": "myStorageAccountKey"
+                }
             }
         }
     ],
