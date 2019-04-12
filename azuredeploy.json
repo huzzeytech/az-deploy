@@ -256,7 +256,7 @@
         },
         {
             "apiVersion": "2018-06-01",
-            "name": "[concat(parameters('virtualMachineName'), parameters('envid'))]",
+            "name": "[concat(parameters('virtualMachineName'), '/', parameters('envid'))]",
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "location": "[resourceGroup().location]",
             "dependsOn": [
