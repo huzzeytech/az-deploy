@@ -25,6 +25,10 @@
             "type": "string",
             "defaultValue": "yubi-vnet"
         },
+        "dnszones_yubi.fun_name": {
+            "type": "string",
+            "defaultValue": "yubi.fun"
+        },
         "publicIpAddressName": {
             "type": "string",
             "defaultValue": "dc1-ip"
@@ -240,11 +244,12 @@
             }
         },
         {
-            "name": "[concat('yubi.fun','/', parameters('envid'))]",
+            "name": "[concat(parameters('dnszones_yubi.fun_name'),'/', parameters('envid'))]",
             "type": "Microsoft.Network/dnsZones/A",
             "apiVersion": "2018-05-01",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]",
+                "[resourceId('Microsoft.Network/dnszones', parameters('dnszones_yubi.fun_name'))]"
             ],
             "properties": {
             "metadata": {},
