@@ -240,7 +240,7 @@
             }
         },
         {
-            "name": "[concat('dnszones_yubi.fun_name/', parameters('envid'))]",
+            "name": "[concat('yubi.fun/', parameters('envid'))]",
             "type": "Microsoft.Network/dnsZones/A",
             "apiVersion": "2018-05-01",
             "dependsOn": [
