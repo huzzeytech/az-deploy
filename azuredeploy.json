@@ -240,11 +240,11 @@
             }
         },
         {
-            "name": "[concat('yubi.fun/', parameters('envid'))]",
+            "name": "[concat('yubi.fun','/', parameters('envid'))]",
             "type": "Microsoft.Network/dnsZones/A",
             "apiVersion": "2018-05-01",
             "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]"
+                "[concat('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]"
             ],
             "properties": {
             "metadata": {},
@@ -256,7 +256,7 @@
         },
         {
             "apiVersion": "2018-06-01",
-            "name": "[concat('scriptrunner/', parameters('envid'))]",
+            "name": "[concat(parameters('virtualMachineName'), parameters('envid'))]",
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "location": "[resourceGroup().location]",
             "dependsOn": [
