@@ -72,7 +72,9 @@
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
         "vmname": "[concat(parameters('envid'), parameters('virtualMachineName'))]",
         "pubipId": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]",
-        "storageName": "[concat('storage', uniqueString(resourceGroup().id))]"
+        "storageName": "[concat('storage', uniqueString(resourceGroup().id))]",
+        "scriptParameters": "[concat('-CustomDomain ', parameters('envid'))]",
+        "scriptFileName": "init-domain.ps1"
     },
     "resources": [
         {
@@ -274,7 +276,7 @@
                     ]
                 },
                 "protectedSettings": {
-                    "commandToExecute": "myExecutionCommand"
+                    "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptFileName'), ' ', variables('scriptParameters'))]"
                 }
             }
         }
