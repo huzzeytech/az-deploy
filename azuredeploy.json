@@ -240,7 +240,7 @@
             }
         },
         {
-            "name": "[concat('yubi.fun/', parameters('envid'))]",
+            "name": "[concat(parameters('envid'), 'dnsalias')]",
             "type": "Microsoft.Network/dnsZones/A",
             "apiVersion": "2018-05-01",
             "dependsOn": [
@@ -256,8 +256,8 @@
         },
         {
             "apiVersion": "2018-06-01",
+            "name": "config-app",
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "scripts/config-app",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
