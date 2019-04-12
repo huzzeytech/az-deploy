@@ -270,13 +270,11 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "fileUris": [
-                        "script location"
+                        "https://raw.githubusercontent.com/huzzeytech/az-deploy/master/scripts/init-domain.ps1"
                     ]
                 },
                 "protectedSettings": {
-                    "commandToExecute": "myExecutionCommand",
-                    "storageAccountName": "myStorageAccountName",
-                    "storageAccountKey": "myStorageAccountKey"
+                    "commandToExecute": "myExecutionCommand"
                 }
             }
         }
