@@ -74,7 +74,7 @@
         "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
         "vnetId": "[resourceId(resourceGroup().name,'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
-        "vmname": "[concat(parameters('envid'), parameters('virtualMachineName'))]",
+        "vmname": "[concat(parameters('envid'), '-', parameters('virtualMachineName'))]",
         "pubipId": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]",
         "storageName": "[concat('yubisa', parameters('envid'))]",
         "scriptParameters": "[concat('-CustomDomain ', parameters('envid'))]",
@@ -179,7 +179,7 @@
             }
         },
         {
-            "name": "[parameters('virtualMachineName')]",
+            "name": "[variables('vmname')]",
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2018-06-01",
             "location": "[parameters('location')]",
@@ -210,7 +210,7 @@
                     ]
                 },
                 "osProfile": {
-                    "computerName": "[variables('vmname')]",
+                    "computerName": "[parameters('virtualMachineName')]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]",
                     "windowsConfiguration": {
@@ -248,7 +248,7 @@
             "type": "Microsoft.Network/dnsZones/A",
             "apiVersion": "2018-05-01",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]",
+                "[concat('Microsoft.Compute/virtualMachines/', variables('vmname'))]",
                 "[concat('Microsoft.Network/publicIpAddresses/', parameters('publicIpAddressName'))]"
             ],
             "properties": {
@@ -261,11 +261,11 @@
         },
         {
             "apiVersion": "2018-06-01",
-            "name": "[concat(parameters('virtualMachineName'), '/', parameters('envid'))]",
+            "name": "[concat(variables('vmname'), '/', parameters('envid'))]",
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
+                "[concat('Microsoft.Compute/virtualMachines/', variables('vmname'))]"
             ],
             "tags": {
                 "displayName": "initialize-app"
