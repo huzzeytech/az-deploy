@@ -245,7 +245,7 @@
             }
         },
         {
-            "apiVersion": "2018-05-01",
+            "apiVersion": "2017-05-10",
             "name": "dnsTemplate",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('dnsResourceGroup')]",
