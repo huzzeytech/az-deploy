@@ -78,7 +78,8 @@
         "pubipId": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]",
         "storageName": "[concat('yubisa', parameters('envid'))]",
         "scriptParameters": "[concat('-CustomDomain ', parameters('envid'))]",
-        "scriptFileName": "init-domain.ps1"
+        "scriptFileName": "init-domain.ps1",
+        "dnsResourceGroup": "infra"
     },
     "resources": [
         {
@@ -244,19 +245,36 @@
             }
         },
         {
-            "name": "[concat(parameters('dnszones_yubi.fun_name'),'/', parameters('envid'))]",
-            "type": "Microsoft.Network/dnsZones/A",
-            "apiVersion": "2018-05-01",
-            "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('vmname'))]",
-                "[concat('Microsoft.Network/publicIpAddresses/', parameters('publicIpAddressName'))]"
-            ],
+            "apiVersion": "2017-05-10",
+            "name": "nestedTemplate",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('dnsResourceGroup')]",
             "properties": {
-            "metadata": {},
-            "TTL": 3600,
-            "targetResource": {
-                "id": "[variables('pubipId')]"
-            }
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "name": "[concat(parameters('dnszones_yubi.fun_name'),'/', parameters('envid'))]",
+                            "type": "Microsoft.Network/dnsZones/A",
+                            "apiVersion": "2018-05-01",
+                            "dependsOn": [
+                                "[concat('Microsoft.Compute/virtualMachines/', variables('vmname'))]",
+                                "[concat('Microsoft.Network/publicIpAddresses/', parameters('publicIpAddressName'))]"
+                            ],
+                            "properties": {
+                                "metadata": {},
+                                "TTL": 3600,
+                                "targetResource": {
+                                    "id": "[variables('pubipId')]"
+                                }
+                            }
+                        }
+                    ]
+                }
             }
         },
         {
