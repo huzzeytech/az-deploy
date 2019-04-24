@@ -249,6 +249,7 @@
             "name": "dnsTemplate",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('dnsResourceGroup')]",
+            "location": "[parameters('location')]",
             "properties": {
                 "mode": "Incremental",
                 "template": {
