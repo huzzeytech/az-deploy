@@ -245,8 +245,8 @@
             }
         },
         {
-            "apiVersion": "2017-05-10",
-            "name": "nestedTemplate",
+            "apiVersion": "2018-05-01",
+            "name": "dnsTemplate",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('dnsResourceGroup')]",
             "properties": {
