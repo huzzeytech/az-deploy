@@ -25,14 +25,6 @@
             "type": "string",
             "defaultValue": "yubi-vnet"
         },
-        "dnszones_yubi.fun_name": {
-            "type": "string",
-            "defaultValue": "yubi.fun"
-        },
-        "publicIpAddressName": {
-            "type": "string",
-            "defaultValue": "dc1-ip"
-        },
         "publicIpAddressType": {
             "type": "string",
             "defaultValue": "Dynamic"
@@ -40,10 +32,6 @@
         "publicIpAddressSku": {
             "type": "string",
             "defaultValue": "Basic"
-        },
-        "virtualMachineName": {
-            "type": "string",
-            "defaultValue": "dc1"
         },
         "osDiskType": {
             "type": "string",
@@ -74,23 +62,29 @@
         "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
         "vnetId": "[resourceId(resourceGroup().name,'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
-        "vmname": "[concat(parameters('envid'), '-', parameters('virtualMachineName'))]",
-        "pubipId": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]",
+        "vmnic": "[concat(parameters('envid'), '-dcnic1')]",
+        "clientnic": "[concat(parameters('envid'), '-clientnic1')]",
+        "vmpubipName": "[concat(parameters('envid'), '-dcip1')]",
+        "clientpubipName": "[concat(parameters('envid'), '-clientip1')]",
+        "vmname": "[concat(parameters('envid'), '-dc1')]",
+        "clientname": "[concat(parameters('envid'), '-client')]",
+        "pubipId": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', variables('vmpubipName'))]",
         "storageName": "[concat('yubisa', parameters('envid'))]",
         "scriptParameters": "[concat('-CustomDomain ', parameters('envid'))]",
         "scriptFileName": "init-domain.ps1",
-        "dnsResourceGroup": "infra"
+        "dnsResourceGroup": "infra",
+        "dnszones_yubi.fun_name": "yubi.fun"
     },
     "resources": [
-        {
-            "name": "[parameters('networkInterfaceName')]",
+         {
+            "name": "[variables('vmnic')]",
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2018-10-01",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]",
                 "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]",
-                "[concat('Microsoft.Network/publicIpAddresses/', parameters('publicIpAddressName'))]"
+                "[concat('Microsoft.Network/publicIpAddresses/', variables('vmpubipName'))]"
             ],
             "properties": {
                 "ipConfigurations": [
@@ -102,7 +96,40 @@
                             },
                             "privateIPAllocationMethod": "Dynamic",
                             "publicIpAddress": {
-                                "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]"
+                                "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', variables('vmpubipName'))]"
+                            }
+                        }
+                    }
+                ],
+                "networkSecurityGroup": {
+                    "id": "[variables('nsgId')]"
+                }
+            },
+            "tags": {
+                "Project": "yubi-azure"
+            }
+        },
+        {
+            "name": "[variables('clientnic')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2018-10-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]",
+                "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]",
+                "[concat('Microsoft.Network/publicIpAddresses/', variables('clientpubipName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig2",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIpAddress": {
+                                "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', variables('clientpubipname'))]"
                             }
                         }
                     }
@@ -165,7 +192,22 @@
             }
         },
         {
-            "name": "[parameters('publicIpAddressName')]",
+            "name": "[variables('vmpubipname')]",
+            "type": "Microsoft.Network/publicIpAddresses",
+            "apiVersion": "2018-08-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "publicIpAllocationMethod": "[parameters('publicIpAddressType')]"
+            },
+            "sku": {
+                "name": "[parameters('publicIpAddressSku')]"
+            },
+            "tags": {
+                "Project": "yubi-azure"
+            }
+        },
+        {
+            "name": "[variables('clientpubipname')]",
             "type": "Microsoft.Network/publicIpAddresses",
             "apiVersion": "2018-08-01",
             "location": "[parameters('location')]",
@@ -185,7 +227,7 @@
             "apiVersion": "2018-06-01",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Network/networkInterfaces/', parameters('networkInterfaceName'))]",
+                "[concat('Microsoft.Network/networkInterfaces/', variables('vmnic'))]",
                 "[concat('Microsoft.Storage/storageAccounts/', variables('storageName'))]"
             ],
             "properties": {
@@ -206,12 +248,63 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaceName'))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('vmnic'))]"
                         }
                     ]
                 },
                 "osProfile": {
-                    "computerName": "[parameters('virtualMachineName')]",
+                    "computerName": "[variables('vmname')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]",
+                    "windowsConfiguration": {
+                        "enableAutomaticUpdates": true,
+                        "provisionVmAgent": true
+                    }
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[concat('https://', variables('storageName'), '.blob.core.windows.net/')]"
+                    }
+                }
+            },
+            "tags": {
+                "Project": "yubi-azure"
+            }
+        },
+        {
+            "name": "[variables('clientname')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2018-06-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', variables('clientnic'))]",
+                "[concat('Microsoft.Storage/storageAccounts/', variables('storageName'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('virtualMachineSize')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsDesktop",
+                        "offer": "Windows-10",
+                        "sku": "rs5-pro",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "createOption": "FromImage"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('clientnic'))]"
+                        }
+                    ]
+                },
+                "osProfile": {
+                    "computerName": "[variables('clientname')]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]",
                     "windowsConfiguration": {
@@ -258,7 +351,7 @@
                     "variables": {},
                     "resources": [
                         {
-                            "name": "[concat(parameters('dnszones_yubi.fun_name'),'/', parameters('envid'))]",
+                            "name": "[concat(variables('dnszones_yubi.fun_name'),'/', parameters('envid'))]",
                             "type": "Microsoft.Network/dnsZones/A",
                             "apiVersion": "2018-05-01",
                             "properties": {
@@ -274,7 +367,7 @@
             },
             "dependsOn": [
                 "[variables('vmname')]",
-                "[parameters('publicIpAddressName')]"
+                "[variables('vmpubipname')]"
             ]
         },
         {
