@@ -261,10 +261,6 @@
                             "name": "[concat(parameters('dnszones_yubi.fun_name'),'/', parameters('envid'))]",
                             "type": "Microsoft.Network/dnsZones/A",
                             "apiVersion": "2018-05-01",
-                            "dependsOn": [
-                                "[concat('Microsoft.Compute/virtualMachines/', variables('vmname'))]",
-                                "[concat('Microsoft.Network/publicIpAddresses/', parameters('publicIpAddressName'))]"
-                            ],
                             "properties": {
                                 "metadata": {},
                                 "TTL": 3600,
@@ -275,7 +271,11 @@
                         }
                     ]
                 }
-            }
+            },
+            "dependsOn": [
+                "[variables('vmname')]",
+                "[parameters('publicIpAddressName')]"
+            ]
         },
         {
             "apiVersion": "2018-06-01",
