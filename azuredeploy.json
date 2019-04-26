@@ -77,6 +77,7 @@
         "scriptFileName": "init-domain.ps1",
         "cascriptParameters": "[concat('-CustomDomain ', parameters('envid'))]",
         "cascriptFileName": "init-ca.ps1",
+        "extensionName": "[concat(variables('caname'), '/createca')]",
         "dnsResourceGroup": "infra",
         "dnszones_yubi.fun_name": "yubi.fun",
         "domainname": "[concat(parameters('envid'), '-yubi.fun')]"
@@ -555,7 +556,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('caname'), '/extensions/', variables('caname'), '/joindomain')]"
+                "[concat('Microsoft.Compute/virtualMachines/', variables('caname'))]"
             ],
             "tags": {
                 "displayName": "initialize-ca"
