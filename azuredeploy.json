@@ -149,7 +149,7 @@
                     "dnsServers": [
                       "10.0.16.5"
                     ],
-                    "internalDnsNameLabel": "[variables('domainname')]",
+                    "internalDnsNameLabel": "yubifun",
                     "internalFqdn": "[variables('domainname')]"
                 }
             },
