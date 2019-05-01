@@ -5,7 +5,7 @@ param (
 $CustomDomain = "$CustomDomain-yubi.fun"
 $SmartCardTemplateName = "YubiKey"
 
-elseif (!(Get-WindowsFeature | where {$_.name -eq "Adcs-Cert-Authority" -and $_.InstallState -eq "Installed"}))
+if (!(Get-WindowsFeature | where {$_.name -eq "Adcs-Cert-Authority" -and $_.InstallState -eq "Installed"}))
 {
     Add-WindowsFeature Adcs-Cert-Authority -IncludeManagementTools
     Install-AdcsCertificationAuthority –CAType EnterpriseRootCA –CACommonName "RootCA" –KeyLength 2048 –HashAlgorithm SHA256 –CryptoProviderName "RSA#Microsoft Software Key Storage Provider" -force
