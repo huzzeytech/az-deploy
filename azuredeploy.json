@@ -566,33 +566,7 @@
                 "Password": "[parameters('adminPassword')]"
               }
             }
-          },
-          {
-            "apiVersion": "2018-06-01",
-            "name": "[concat(variables('caname'), '/createca')]",
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "location": "[resourceGroup().location]",
-            "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('clientname'), '/extensions/joindomain')]"
-            ],
-            "tags": {
-                "displayName": "initialize-ca"
-            },
-            "properties": {
-                "publisher": "Microsoft.Compute",
-                "type": "CustomScriptExtension",
-                "typeHandlerVersion": "1.9",
-                "autoUpgradeMinorVersion": true,
-                "settings": {
-                    "fileUris": [
-                        "https://raw.githubusercontent.com/huzzeytech/az-deploy/master/scripts/init-ca.ps1"
-                    ]
-                },
-                "protectedSettings": {
-                    "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('cascriptFileName'), ' ', variables('cascriptParameters'))]"
-                }
-            }
-        }
+          }
     ],
     "outputs": {
         "adminUsername": {
