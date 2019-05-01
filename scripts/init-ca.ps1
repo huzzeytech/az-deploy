@@ -11,7 +11,7 @@ elseif (!(Get-WindowsFeature | where {$_.name -eq "Adcs-Cert-Authority" -and $_.
     Install-AdcsCertificationAuthority –CAType EnterpriseRootCA –CACommonName "RootCA" –KeyLength 2048 –HashAlgorithm SHA256 –CryptoProviderName "RSA#Microsoft Software Key Storage Provider" -force
 }
 
-$ConfigContext = ([ADSI]"LDAP://RootDSE").ConfigurationNamingContext 
+<# $ConfigContext = ([ADSI]"LDAP://RootDSE").ConfigurationNamingContext 
 $ADSI = [ADSI]"LDAP://CN=Certificate Templates,CN=Public Key Services,CN=Services,$ConfigContext" 
 
 $NewTempl = $ADSI.Create("pKICertificateTemplate", "CN=$SmartCardTemplateName") 
@@ -85,4 +85,4 @@ $ACE = New-Object System.DirectoryServices.ActiveDirectoryAccessRule($identity,$
 $NewTempl.psbase.ObjectSecurity.SetAccessRule($ACE)
 $NewTempl.psbase.commitchanges()
 
-Add-CATemplate -Name $SmartCardTemplateName -force 
+Add-CATemplate -Name $SmartCardTemplateName -force #> 
