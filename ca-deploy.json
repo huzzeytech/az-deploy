@@ -2,20 +2,28 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-      "envid": {
-        "type": "string"
-      },
-      "location": {
-        "type": "string",
-        "defaultValue": "eastus",
-        "metadata": {
-          "description": "Location for all resources."
+        "envid": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "eastus",
+            "metadata": {
+            "description": "Location for all resources."
+            }
+        },
+        "adminUsername": {
+            "type": "string",
+            "defaultValue": "BadAdmin"
+        },
+        "adminPassword": {
+            "type": "secureString",
+            "defaultValue": "BadAdminPass123"
         }
-      }
     },
     "variables": {
         "scriptFileName": "init-ca.ps1",
-        "scriptParameters": "[concat('-CustomDomain ', parameters('envid'))]",
+        "scriptParameters": "[concat('-CustomDomain ', parameters('envid'),' -adminUsername', parameters('adminUsername'), ' -adminPassword \"', parameters('adminPassword'), '\"')]",
         "vmname": "[concat(parameters('envid'), '-ca')]"
     },
     "resources": [

@@ -1,14 +1,32 @@
 param (
-    [string]$CustomDomain
+    [string]$CustomDomain,
+    [string]$adminUsername,
+    [string]$adminPassword
 )
 
 $CustomDomain = "$CustomDomain-yubi.fun"
 $SmartCardTemplateName = "YubiKey"
 
-if (!(Get-WindowsFeature | where {$_.name -eq "Adcs-Cert-Authority" -and $_.InstallState -eq "Installed"}))
-{
-    Add-WindowsFeature Adcs-Cert-Authority -IncludeManagementTools
-    Install-AdcsCertificationAuthority –CAType EnterpriseRootCA –CACommonName "RootCA" –KeyLength 2048 –HashAlgorithm SHA256 –CryptoProviderName "RSA#Microsoft Software Key Storage Provider" -force
+$password =  ConvertTo-SecureString $AdminPassword -AsPlainText -Force
+$credential = New-Object System.Management.Automation.PSCredential("$env:USERDOMAIN\$AdminUsername", $password)
+
+Write-Verbose -Verbose "Entering Custom Script Extension..."
+
+Invoke-Command -Credential $credential -ComputerName $env:COMPUTERNAME -ArgumentList $PSScriptRoot -ScriptBlock {
+    param 
+    (
+      $workingDir
+    )
+   
+    #################################
+    # Elevated custom scripts go here 
+    #################################
+    Write-Verbose -Verbose "Entering Elevated Custom Script Commands..."
+    if (!(Get-WindowsFeature | where {$_.name -eq "Adcs-Cert-Authority" -and $_.InstallState -eq "Installed"}))
+    {
+        Add-WindowsFeature Adcs-Cert-Authority -IncludeManagementTools
+        Install-AdcsCertificationAuthority –CAType EnterpriseRootCA –CACommonName "RootCA" –KeyLength 2048 –HashAlgorithm SHA256 –CryptoProviderName "RSA#Microsoft Software Key Storage Provider" -force
+    }
 }
 
 <# $ConfigContext = ([ADSI]"LDAP://RootDSE").ConfigurationNamingContext 
