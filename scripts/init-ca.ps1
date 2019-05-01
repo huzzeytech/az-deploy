@@ -27,6 +27,11 @@ Invoke-Command -Credential $credential -ComputerName $env:COMPUTERNAME -Argument
         Add-WindowsFeature Adcs-Cert-Authority -IncludeManagementTools
         Install-AdcsCertificationAuthority –CAType EnterpriseRootCA –CACommonName "RootCA" –KeyLength 2048 –HashAlgorithm SHA256 –CryptoProviderName "RSA#Microsoft Software Key Storage Provider" -force
     }
+    <# if (Get-Service "Active Directory Certificate Services" | Where {$_.status –eq 'Stopped'})
+    {
+        Start-Service "Active Directory Certificate Services"
+        Start-Sleep -Seconds 30
+    } #>
 }
 
 <# $ConfigContext = ([ADSI]"LDAP://RootDSE").ConfigurationNamingContext 
