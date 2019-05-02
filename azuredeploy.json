@@ -56,6 +56,20 @@
         "diagnosticsStorageAccountKind": {
             "type": "string",
             "defaultValue": "Storage"
+        },
+        "modulesUrl": {
+          "type": "string",
+          "defaultValue": "",
+          "metadata": {
+            "description": "URL for the DSC configuration module. NOTE: Can be a Github url(raw) to the zip file"
+          }
+        },
+        "configurationFunction": {
+          "type": "string",
+          "defaultValue": "DSC.ps1\\rootca",
+          "metadata": {
+            "description": "DSC configuration function to call"
+            }
         }
     },
     "variables": {
@@ -81,7 +95,8 @@
         "dnszones_yubi.fun_name": "yubi.fun",
         "domainname": "[concat(parameters('envid'), '-yubi.fun')]",
         "netbios": "[concat(parameters('envid'), '-yubi')]",
-        "extension": "[concat(variables('vmname'), '/createdomain')]"
+        "extension": "[concat(variables('vmname'), '/createdomain')]",
+        "configurationFunction": "rootca"
     },
     "resources": [
          {
@@ -566,7 +581,38 @@
                 "Password": "[parameters('adminPassword')]"
               }
             }
-          }
+          },
+          {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(variables('caname'),'/dscExtension')]",
+            "apiVersion": "2018-06-30",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', variables('clientname'), '/extensions/joindomain')]"
+            ],
+            "properties": {
+              "publisher": "Microsoft.Powershell",
+              "type": "DSC",
+              "typeHandlerVersion": "2.19",
+              "autoUpgradeMinorVersion": true,
+              "settings": {
+                "ModulesUrl": "[parameters('modulesUrl')]",
+                "ConfigurationFunction": "[parameters('configurationFunction')]",
+                "Properties": {
+                  "DomainName": "[variables('domainname')]",
+                  "AdminCreds": {
+                    "UserName": "[parameters('adminUserName')]",
+                    "Password": "PrivateSettingsRef:AdminPassword"
+                  }
+                }
+              },
+              "protectedSettings": {
+                "Items": {
+                    "AdminPassword": "[parameters('adminPassword')]"
+              }
+            }
+            }
+        }
     ],
     "outputs": {
         "adminUsername": {
