@@ -15,6 +15,21 @@ Configuration rootca
      Node localhost
      {
  
+        Script ScriptExample
+        {
+            SetScript = {
+                Install-Module -Name ActiveDirectoryCSDsc
+            }
+            TestScript = {
+                $error.clear()
+                try { Get-InstalledModule -Name ActiveDirectoryCSDsc }
+                catch { return $false }
+                if (!$error) {
+                    return $true
+                }
+            }
+            GetScript = { @{ Result = "Test" } }
+        }
         # Install the ADCS Certificate Authority
         WindowsFeature ADCSCA {
             Name = 'ADCS-Cert-Authority'
