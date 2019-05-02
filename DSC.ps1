@@ -10,7 +10,7 @@ Configuration rootca
  
     )
  
-     Import-DscResource -ModuleName ActiveDirectoryCSDsc, PSDesiredStateConfiguration
+     Import-DscResource -ModuleName PSDesiredStateConfiguration
  
      Node localhost
      {
@@ -19,6 +19,7 @@ Configuration rootca
         {
             SetScript = {
                 Install-Module -Name ActiveDirectoryCSDsc
+                Import-DscResource -ModuleName ActiveDirectoryCSDsc
             }
             TestScript = {
                 $error.clear()
