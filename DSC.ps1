@@ -10,7 +10,7 @@ Configuration rootca
  
     )
  
-     Import-DscResource -ModuleName xAdcsDeployment, PSDesiredStateConfiguration
+     Import-DscResource -ModuleName ActiveDirectoryCSDsc, PSDesiredStateConfiguration
  
      Node localhost
      {
@@ -22,13 +22,12 @@ Configuration rootca
         }
         
         # Configure the CA as Standalone Root CA
-        xADCSCertificationAuthority ConfigCA
+        AdcsCertificationAuthority CertificateAuthority
         {
             Ensure = 'Present'
-            # Credential = $LocalAdminCredential
+            Credential = $Admincreds
+            IsSingleInstance = "Yes"
             CAType = 'EnterpriseRootCA'
-            CACommonName = $Node.CACommonName
-            CADistinguishedNameSuffix = $Node.CADistinguishedNameSuffix
             ValidityPeriod = 'Years'
             ValidityPeriodUnits = 20
             CryptoProviderName = 'RSA#Microsoft Software Key Storage Provider'
