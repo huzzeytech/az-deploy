@@ -3,6 +3,7 @@ param (
     [string]$adminUsername,
     [string]$adminPassword
 )
+Start-Transcript -NoClobber
 
 $CustomDomain = "$CustomDomain-yubi.fun"
 $SmartCardTemplateName = "YubiKey"
