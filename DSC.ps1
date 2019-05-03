@@ -15,7 +15,7 @@ Configuration rootca
      Node localhost
      {
  
-        Script ScriptExample
+        <# Script ScriptExample
         {
             SetScript = {
                 Install-Module -Name ActiveDirectoryCSDsc
@@ -30,7 +30,7 @@ Configuration rootca
                 }
             }
             GetScript = { @{ Result = "Test" } }
-        }
+        } #>
         # Install the ADCS Certificate Authority
         WindowsFeature ADCSCA {
             Name = 'ADCS-Cert-Authority'
@@ -38,7 +38,7 @@ Configuration rootca
         }
         
         # Configure the CA as Standalone Root CA
-        AdcsCertificationAuthority CertificateAuthority
+        <# AdcsCertificationAuthority CertificateAuthority
         {
             Ensure = 'Present'
             Credential = $Admincreds
@@ -50,7 +50,7 @@ Configuration rootca
             HashAlgorithmName = 'SHA256'
             KeyLength = 4096
             DependsOn = '[WindowsFeature]ADCSCA' 
-        }
+        } #>
  
             WindowsFeature RSAT-ADCS 
         { 
