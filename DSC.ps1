@@ -15,22 +15,16 @@ Configuration rootca
      Node localhost
      {
  
-        <# Script ScriptExample
+        Script ScriptExample
         {
             SetScript = {
-                Install-Module -Name ActiveDirectoryCSDsc
-                Import-DscResource -ModuleName ActiveDirectoryCSDsc
+                $sw = New-Object System.IO.StreamWriter("C:\TempFolder\TestFile.txt")
+                $sw.WriteLine("Some sample string")
+                $sw.Close()
             }
-            TestScript = {
-                $error.clear()
-                try { Get-InstalledModule -Name ActiveDirectoryCSDsc }
-                catch { return $false }
-                if (!$error) {
-                    return $true
-                }
-            }
-            GetScript = { @{ Result = "Test" } }
-        } #>
+            TestScript = { Test-Path "C:\TempFolder\TestFile.txt" }
+            GetScript = { @{ Result = (Get-Content C:\TempFolder\TestFile.txt) } }
+        }
         # Install the ADCS Certificate Authority
         WindowsFeature ADCSCA {
             Name = 'ADCS-Cert-Authority'
