@@ -70,6 +70,13 @@
           "metadata": {
             "description": "DSC configuration function to call"
             }
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "metadata": {
+              "description": "Path to the nested templates used in this deployment"
+            },
+            "defaultValue": "https://raw.githubusercontent.com/huzzeytech/az-deploy/master/"
         }
     },
     "variables": {
@@ -95,11 +102,47 @@
         "dnszones_yubi.fun_name": "yubi.fun",
         "domainname": "[concat(parameters('envid'), '-yubi.fun')]",
         "netbios": "[concat(parameters('envid'), '-yubi')]",
-        "extension": "[concat(variables('vmname'), '/createdomain')]",
-        "configurationFunction": "rootca"
+        "compilename": "[concat(parameters('envid'), '-compile')]",
+        "provisionConfigurationURL": "[uri(parameters('_artifactsLocation'), concat('nested/provisionConfiguration.json'))]",
+        "automationAccountName": "yubi-test"
     },
     "resources": [
-         {
+        {
+            "name": "provisionConfiguration",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "properties": {
+              "mode": "Incremental",
+              "templateLink": {
+                "uri": "[variables('provisionConfigurationURL')]",
+                "contentVersion": "1.0.0.0"
+              },
+              "parameters": {
+                "_artifactsLocation": {
+                  "value": "[parameters('_artifactsLocation')]"
+                },
+                "automationAccountName": {
+                  "value": "[variables('automationAccountName')]"
+                },
+                "adminUsername": {
+                  "value": "[parameters('adminUsername')]"
+                },
+                "adminPassword": {
+                  "value": "[parameters('adminPassword')]"
+                },
+                "domainName": {
+                  "value": "[variables('domainName')]"
+                },
+                "location": {
+                  "value": "[parameters('location')]"
+                },
+                "compileName": {
+                  "value": "[variables('compileName')]"
+                }
+              }
+            }
+        }, 
+        {
             "name": "[variables('vmnic')]",
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2018-10-01",

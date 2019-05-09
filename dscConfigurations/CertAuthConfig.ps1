@@ -1,29 +1,22 @@
-Configuration rootca
+Configuration CertAuthConfig
 {
-   param
-   (
-        [Parameter(Mandatory)]
-        [String]$DomainName,
  
-        [Parameter(Mandatory)]
-        [System.Management.Automation.PSCredential]$Admincreds
+    $domainCredential = Get-AutomationPSCredential domainCredential
+
+    Import-DscResource -ModuleName ActiveDirectoryCSDsc, PSDesiredStateConfiguration
  
-    )
- 
-     Import-DscResource -ModuleName PSDesiredStateConfiguration
- 
-     Node localhost
+     Node $AllNodes.NodeName
      {
  
         Script ScriptExample
         {
             SetScript = {
-                $sw = New-Object System.IO.StreamWriter("C:\TempFolder\TestFile.txt")
+                $sw = New-Object System.IO.StreamWriter("C:\TTestFile.txt")
                 $sw.WriteLine("Some sample string")
                 $sw.Close()
             }
-            TestScript = { Test-Path "C:\TempFolder\TestFile.txt" }
-            GetScript = { @{ Result = (Get-Content C:\TempFolder\TestFile.txt) } }
+            TestScript = { Test-Path "C:\TestFile.txt" }
+            GetScript = { @{ Result = (Get-Content C:\TestFile.txt) } }
         }
         # Install the ADCS Certificate Authority
         WindowsFeature ADCSCA {
@@ -32,10 +25,10 @@ Configuration rootca
         }
         
         # Configure the CA as Standalone Root CA
-        <# AdcsCertificationAuthority CertificateAuthority
+        AdcsCertificationAuthority CertificateAuthority
         {
             Ensure = 'Present'
-            Credential = $Admincreds
+            Credential = $domainCredential
             IsSingleInstance = "Yes"
             CAType = 'EnterpriseRootCA'
             ValidityPeriod = 'Years'
@@ -44,7 +37,7 @@ Configuration rootca
             HashAlgorithmName = 'SHA256'
             KeyLength = 4096
             DependsOn = '[WindowsFeature]ADCSCA' 
-        } #>
+        }
  
             WindowsFeature RSAT-ADCS 
         { 
