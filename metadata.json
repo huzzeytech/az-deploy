@@ -1,10 +1,10 @@
 {
     "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
-    "type": "QuickStart",
-    "itemDisplayName": "Deploy a simple VM with ADDS and ADCS",
+    "type": "Application",
+    "itemDisplayName": "Deploy test machines",
     "icon": "windowsVM",
-    "description": "Deploy a simple VM with ADDS and ADCS",
-    "summary": "Deploy a simple VM with ADDS and ADCS",
+    "description": "Deploy test machines",
+    "summary": "Deploy test machines",
     "githubUsername": "huzzeytech",
-    "dateUpdated": "2019-04-09"
+    "dateUpdated": "2019-05-09"
   }
