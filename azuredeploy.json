@@ -57,19 +57,9 @@
             "type": "string",
             "defaultValue": "Storage"
         },
-        "modulesUrl": {
-          "type": "string",
-          "defaultValue": "https://github.com/huzzeytech/az-deploy/blob/master/DSC.zip?raw=true",
-          "metadata": {
-            "description": "URL for the DSC configuration module. NOTE: Can be a Github url(raw) to the zip file"
-          }
-        },
-        "configurationFunction": {
-          "type": "string",
-          "defaultValue": "DSC.ps1\\rootca",
-          "metadata": {
-            "description": "DSC configuration function to call"
-            }
+        "nodeConfigurationName": {
+            "type": "string",
+            "defaultValue": "CertAuthConfig.localhost"
         },
         "_artifactsLocation": {
             "type": "string",
@@ -627,33 +617,59 @@
           },
           {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('caname'),'/dscExtension')]",
-            "apiVersion": "2019-03-01",
+            "name": "[concat(variables('caname'),'/OnboardToDSC')]",
+            "apiVersion": "2017-12-01",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('clientname'), '/extensions/joindomain')]"
+              "[concat('Microsoft.Compute/virtualMachines/', variables('caname'))]"
             ],
             "properties": {
               "publisher": "Microsoft.Powershell",
               "type": "DSC",
-              "typeHandlerVersion": "2.19",
+              "typeHandlerVersion": "2.75",
               "autoUpgradeMinorVersion": true,
-              "settings": {
-                "ModulesUrl": "[parameters('modulesUrl')]",
-                "ConfigurationFunction": "[parameters('configurationFunction')]",
-                "Properties": {
-                  "DomainName": "[variables('domainname')]",
-                  "AdminCreds": {
-                    "UserName": "[parameters('adminUserName')]",
-                    "Password": "PrivateSettingsRef:AdminPassword"
-                  }
-                }
-              },
               "protectedSettings": {
                 "Items": {
-                    "AdminPassword": "[parameters('adminPassword')]"
+                  "registrationKeyPrivate": "[listKeys(resourceId('Microsoft.Automation/automationAccounts/', variables('automationAccountName')), '2018-01-15').Keys[0].value]"
+                }
+              },
+              "settings": {
+                "Properties": [
+                  {
+                    "Name": "RegistrationKey",
+                    "Value": {
+                      "UserName": "PLACEHOLDER_DONOTUSE",
+                      "Password": "PrivateSettingsRef:registrationKeyPrivate"
+                    },
+                    "TypeName": "System.Management.Automation.PSCredential"
+                  },
+                  {
+                    "Name": "RegistrationUrl",
+                    "Value": "[reference(concat('Microsoft.Automation/automationAccounts/', variables('automationAccountName'))).registrationUrl]",
+                    "TypeName": "System.String"
+                  },
+                  {
+                    "Name": "NodeConfigurationName",
+                    "Value": "[parameters('nodeConfigurationName')]",
+                    "TypeName": "System.String"
+                  },
+                  {
+                    "Name": "ConfigurationMode",
+                    "Value": "ApplyandAutoCorrect",
+                    "TypeName": "System.String"
+                  },
+                  {
+                    "Name": "RebootNodeIfNeeded",
+                    "Value": true,
+                    "TypeName": "System.Boolean"
+                  },
+                  {
+                    "Name": "ActionAfterReboot",
+                    "Value": "ContinueConfiguration",
+                    "TypeName": "System.String"
+                  }
+                ]
               }
-            }
             }
         }
     ],
