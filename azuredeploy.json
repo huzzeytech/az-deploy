@@ -645,7 +645,7 @@
                   },
                   {
                     "Name": "RegistrationUrl",
-                    "Value": "[reference('/subscriptions/5c134fa3-e537-4bb7-9857-6f3cad39a5cb/resourceGroups/infra/providers/Microsoft.Automation/automationAccounts/yubi-test').registrationUrl]",
+                    "Value": "[reference('/subscriptions/5c134fa3-e537-4bb7-9857-6f3cad39a5cb/resourceGroups/infra/providers/Microsoft.Automation/automationAccounts/yubi-test', '2018-01-15').registrationUrl]",
                     "TypeName": "System.String"
                   },
                   {
