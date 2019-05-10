@@ -645,7 +645,7 @@
                   },
                   {
                     "Name": "RegistrationUrl",
-                    "Value": "[reference(concat('Microsoft.Automation/automationAccounts/', variables('automationAccountName'))).registrationUrl]",
+                    "Value": "[reference(resourceId('infra','Microsoft.Automation/automationAccounts/', variables('automationAccountName'))).registrationUrl]",
                     "TypeName": "System.String"
                   },
                   {
