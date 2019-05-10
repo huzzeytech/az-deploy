@@ -39,7 +39,7 @@
     },
     "resources": [
       {
-        "name": "[concat(parameters('envid'), variables('dscConfigurations').CertAuthConfig.name)]",
+        "name": "[concat(parameters('envid'), '/', variables('dscConfigurations').CertAuthConfig.name)]",
         "type": "Microsoft.Automation/automationAccounts/configurations",
         "apiVersion": "2015-10-31",
         "location": "[parameters('location')]",
@@ -58,7 +58,7 @@
         "apiVersion": "2018-01-15",
         "tags": {},
         "dependsOn": [
-          "[concat(parameters('envid'), variables('dscConfigurations').CertAuthConfig.name)]"
+          "[concat(parameters('envid'), '/', variables('dscConfigurations').CertAuthConfig.name)]"
         ],
         "properties": {
           "configuration": {
