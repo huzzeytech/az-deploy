@@ -23,6 +23,9 @@
       "compileName": {
         "type": "string",
         "defaultValue": "[guid(resourceGroup().id, deployment().name)]"
+      },
+      "envid": {
+        "type": "string"
       }
     },
     "variables": {
@@ -36,26 +39,22 @@
     },
     "resources": [
       {
-        "name": "domainCredential",
+        "name": "[concat(parameters('envid'), '/domainCredential')]",
         "type": "Microsoft.Automation/automationAccounts/credentials",
         "apiVersion": "2015-10-31",
         "location": "[parameters('location')]",
-        "dependsOn": [
-          "[parameters('AutomationAccountName')]"
-        ],
         "properties": {
           "userName": "[parameters('adminUsername')]",
           "password": "[parameters('adminPassword')]"
         }
       },
       {
-        "name": "[variables('dscConfigurations').CertAuthConfig.name]",
+        "name": "[concat(parameters('envid'), variables('dscConfigurations').CertAuthConfig.name)]",
         "type": "Microsoft.Automation/automationAccounts/configurations",
         "apiVersion": "2015-10-31",
         "location": "[parameters('location')]",
         "dependsOn": [
-          "[parameters('AutomationAccountName')]",
-          "domainCredential"            
+          "[concat(parameters('envid'), '/domainCredential')]"            
         ],
         "properties": {
           "state": "Published",
@@ -67,13 +66,12 @@
         }
       },
       {
-        "name": "[parameters('compileName')]",
+        "name": "[concat(parameters('envid'), '/', parameters('compileName'))]",
         "type": "Microsoft.Automation/automationAccounts/compilationjobs",
         "apiVersion": "2018-01-15",
         "tags": {},
         "dependsOn": [
-          "[parameters('AutomationAccountName')]",
-          "[variables('dscConfigurations').CertAuthConfig.name]"
+          "[concat(parameters('envid'), variables('dscConfigurations').CertAuthConfig.name)]"
         ],
         "properties": {
           "configuration": {
