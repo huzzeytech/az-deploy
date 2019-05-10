@@ -54,7 +54,7 @@
         "apiVersion": "2015-10-31",
         "location": "[parameters('location')]",
         "dependsOn": [
-          "[concat(parameters('envid'), '/domainCredential')]"            
+          "[concat('Microsoft.Automation/automationAccounts/credentials/', parameters('envid'), '/domainCredential')]"            
         ],
         "properties": {
           "state": "Published",
