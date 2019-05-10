@@ -35,11 +35,12 @@
           "description": "minimum viable configuration for a domain controller role",
           "script": "dscConfigurations/CertAuthConfig.ps1"
         }
-      }
+      },
+      "credname": "[concat(parameters('envid'), '/domainCredential')]"
     },
     "resources": [
       {
-        "name": "[concat(parameters('envid'), '/domainCredential')]",
+        "name": "[variables('credname')]",
         "type": "Microsoft.Automation/automationAccounts/credentials",
         "apiVersion": "2015-10-31",
         "location": "[parameters('location')]",
@@ -54,7 +55,7 @@
         "apiVersion": "2015-10-31",
         "location": "[parameters('location')]",
         "dependsOn": [
-          "[concat('Microsoft.Automation/automationAccounts/infra/credentials/', parameters('envid'), '/domainCredential')]"            
+          "[variables('credname')]"            
         ],
         "properties": {
           "state": "Published",
