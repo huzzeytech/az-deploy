@@ -630,7 +630,7 @@
               "autoUpgradeMinorVersion": true,
               "protectedSettings": {
                 "Items": {
-                  "registrationKeyPrivate": "[listKeys(resourceId('Microsoft.Automation/automationAccounts/', variables('automationAccountName')), '2018-01-15').Keys[0].value]"
+                  "registrationKeyPrivate": "[listKeys(resourceId('infra','Microsoft.Automation/automationAccounts/', variables('automationAccountName')), '2018-01-15').Keys[0].value]"
                 }
               },
               "settings": {
