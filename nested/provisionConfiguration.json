@@ -36,67 +36,53 @@
     },
     "resources": [
       {
-        "name": "[parameters('automationAccountName')]",
-        "type": "Microsoft.Automation/automationAccounts",
-        "apiversion": "2018-01-15",
+        "name": "domainCredential",
+        "type": "Microsoft.Automation/automationAccounts/credentials",
+        "apiVersion": "2015-10-31",
         "location": "[parameters('location')]",
-        "comments": "Automation account for OMS",
+        "dependsOn": [
+          "[parameters('AutomationAccountName')]"
+        ],
         "properties": {
-          "sku": {
-            "name": "OMS"
+          "userName": "[parameters('adminUsername')]",
+          "password": "[parameters('adminPassword')]"
+        }
+      },
+      {
+        "name": "[variables('dscConfigurations').CertAuthConfig.name]",
+        "type": "Microsoft.Automation/automationAccounts/configurations",
+        "apiVersion": "2015-10-31",
+        "location": "[parameters('location')]",
+        "dependsOn": [
+          "[parameters('AutomationAccountName')]",
+          "domainCredential"            
+        ],
+        "properties": {
+          "state": "Published",
+          "overwrite": "true",
+          "source": {
+            "type": "uri",
+            "value": "[concat(parameters('_artifactsLocation'), variables('dscConfigurations').CertAuthConfig.script)]"
           }
-        },
-        "resources": [
-          {
-            "name": "domainCredential",
-            "type": "credentials",
-            "apiVersion": "2018-01-15",
-            "location": "[parameters('location')]",
-            "dependsOn": [
-              "[parameters('AutomationAccountName')]"
-            ],
-            "properties": {
-              "userName": "[parameters('adminUsername')]",
-              "password": "[parameters('adminPassword')]"
-            }
+        }
+      },
+      {
+        "name": "[parameters('compileName')]",
+        "type": "Microsoft.Automation/automationAccounts/compilationjobs",
+        "apiVersion": "2018-01-15",
+        "tags": {},
+        "dependsOn": [
+          "[parameters('AutomationAccountName')]",
+          "[variables('dscConfigurations').CertAuthConfig.name]"
+        ],
+        "properties": {
+          "configuration": {
+            "name": "[variables('dscConfigurations').CertAuthConfig.name]"
           },
-          {
-            "name": "[variables('dscConfigurations').CertAuthConfig.name]",
-            "type": "configurations",
-            "apiVersion": "2018-01-15",
-            "location": "[parameters('location')]",
-            "dependsOn": [
-              "[parameters('AutomationAccountName')]",
-              "domainCredential"            
-            ],
-            "properties": {
-              "state": "Published",
-              "overwrite": "true",
-              "source": {
-                "type": "uri",
-                "value": "[concat(parameters('_artifactsLocation'), variables('dscConfigurations').CertAuthConfig.script)]"
-              }
-            }
-          },
-          {
-            "name": "[parameters('compileName')]",
-            "type": "compilationjobs",
-            "apiVersion": "2018-01-15",
-            "tags": {},
-            "dependsOn": [
-              "[parameters('AutomationAccountName')]",
-              "[variables('dscConfigurations').CertAuthConfig.name]"
-            ],
-            "properties": {
-              "configuration": {
-                "name": "[variables('dscConfigurations').CertAuthConfig.name]"
-              },
-              "parameters": {
-                "configurationData": "[concat('{\"AllNodes\":{\"nodename\":\"localhost\",\"domainname\":\"', parameters('domainName'), '\"}}')]"
-              }
-            }
+          "parameters": {
+            "configurationData": "[concat('{\"AllNodes\":{\"nodename\":\"localhost\",\"domainname\":\"', parameters('domainName'), '\"}}')]"
           }
-        ]
+        }
       }
     ],
     "outputs": {}
