@@ -53,7 +53,7 @@
         }
       },
       {
-        "name": "[concat(parameters('envid'), '/', parameters('compileName'))]",
+        "name": "[concat(parameters('automationAccountName'), '/', parameters('compileName'))]",
         "type": "Microsoft.Automation/automationAccounts/compilationjobs",
         "apiVersion": "2018-01-15",
         "tags": {},
