@@ -39,7 +39,7 @@
     },
     "resources": [
       {
-        "name": "[concat(parameters('envid'), '/', variables('dscConfigurations').CertAuthConfig.name)]",
+        "name": "[variables('dscConfigurations').CertAuthConfig.name]",
         "type": "Microsoft.Automation/automationAccounts/configurations",
         "apiVersion": "2015-10-31",
         "location": "[parameters('location')]",
