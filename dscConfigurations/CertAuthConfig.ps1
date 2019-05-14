@@ -8,7 +8,7 @@ Configuration CertAuthConfig
  
      Node $AllNodes.NodeName
      {
-         
+
         # Install the ADCS Certificate Authority
         WindowsFeature ADCSCA {
             Name = 'ADCS-Cert-Authority'
@@ -44,5 +44,3 @@ Configuration CertAuthConfig
         } 
      }
   }
-
-  CertAuthConfig
