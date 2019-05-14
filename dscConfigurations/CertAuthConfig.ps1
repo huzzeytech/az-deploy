@@ -8,17 +8,7 @@ Configuration CertAuthConfig
  
      Node $AllNodes.NodeName
      {
- 
-        <# Script ScriptExample
-        {
-            SetScript = {
-                $sw = New-Object System.IO.StreamWriter("C:\TTestFile.txt")
-                $sw.WriteLine("Some sample string")
-                $sw.Close()
-            }
-            TestScript = { Test-Path "C:\TestFile.txt" }
-            GetScript = { @{ Result = (Get-Content C:\TestFile.txt) } }
-        } #>
+         
         # Install the ADCS Certificate Authority
         WindowsFeature ADCSCA {
             Name = 'ADCS-Cert-Authority'
