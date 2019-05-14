@@ -1,14 +1,15 @@
 Configuration CertAuthConfig
 {
  
-    $domainCredential = Get-AutomationPSCredential domainCredential
+    $domainCredential = Get-AzAutomationCredential -ResourceGroupName "infra" -AutomationAccountName "yubi-test" -Name "domainCredential"
 
-    Import-DscResource -ModuleName ActiveDirectoryCSDsc, PSDesiredStateConfiguration
+    Import-DscResource -ModuleName ActiveDirectoryCSDsc
+    Import-DscResource -ModuleName PSDesiredStateConfiguration
  
      Node $AllNodes.NodeName
      {
  
-        Script ScriptExample
+        <# Script ScriptExample
         {
             SetScript = {
                 $sw = New-Object System.IO.StreamWriter("C:\TTestFile.txt")
@@ -17,7 +18,7 @@ Configuration CertAuthConfig
             }
             TestScript = { Test-Path "C:\TestFile.txt" }
             GetScript = { @{ Result = (Get-Content C:\TestFile.txt) } }
-        }
+        } #>
         # Install the ADCS Certificate Authority
         WindowsFeature ADCSCA {
             Name = 'ADCS-Cert-Authority'
@@ -53,3 +54,5 @@ Configuration CertAuthConfig
         } 
      }
   }
+
+  CertAuthConfig
