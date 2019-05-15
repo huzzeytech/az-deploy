@@ -35,7 +35,8 @@
           "description": "minimum viable configuration for a domain controller role",
           "script": "dscConfigurations/CertAuthConfig.ps1"
         }
-      }
+      },
+      "credUN": "[concat(parameters('domainName'), '\\', parameters('adminUsername'))]"
     },
     "resources": [
       {
@@ -64,6 +65,16 @@
           "parameters": {
             "configurationData": "[concat('{\"AllNodes\":{\"nodename\":\"localhost\"}}')]"
           }
+        }
+      },
+      {
+        "name": "[concat(parameters('automationAccountName'), '/', parameters('domainName'))]",
+        "type": "Microsoft.Automation/automationAccounts/credentials",
+        "apiVersion": "2015-10-31",
+        "properties": {
+          "userName": "[variables('credUN')]",
+          "password": "[parameters('adminPassword')]",
+          "description": "Elevated Credential"
         }
       }
     ],
