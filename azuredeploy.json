@@ -92,7 +92,6 @@
         "dnszones_yubi.fun_name": "yubi.fun",
         "domainname": "[concat(parameters('envid'), '-yubi.fun')]",
         "netbios": "[concat(parameters('envid'), '-yubi')]",
-        "compilename": "[concat(parameters('envid'), 'compile')]",
         "provisionConfigurationURL": "[uri(parameters('_artifactsLocation'), concat('nested/provisionConfiguration.json'))]",
         "automationAccountName": "yubi-test"
     },
@@ -126,9 +125,6 @@
                 },
                 "location": {
                   "value": "[parameters('location')]"
-                },
-                "compileName": {
-                  "value": "[variables('compileName')]"
                 },
                 "envid": {
                     "value": "[parameters('envid')]"
