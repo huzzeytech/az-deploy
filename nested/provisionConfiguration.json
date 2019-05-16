@@ -59,6 +59,9 @@
         "type": "Microsoft.Automation/automationAccounts/compilationjobs",
         "apiVersion": "2018-01-15",
         "tags": {},
+        "dependsOn": [
+          "[variables('credName')]"
+        ],
         "properties": {
           "configuration": {
             "name": "[variables('dscConfigurations').CertAuthConfig.name]"
