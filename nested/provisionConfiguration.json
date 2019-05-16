@@ -36,7 +36,8 @@
           "script": "dscConfigurations/CertAuthConfig.ps1"
         }
       },
-      "credUN": "[concat(parameters('domainName'), '\\', parameters('adminUsername'))]"
+      "credUN": "[concat(parameters('domainName'), '\\', parameters('adminUsername'))]",
+      "credName": "[concat(parameters('automationAccountName'), '/', parameters('domainName'))]"
     },
     "resources": [
       {
@@ -63,12 +64,12 @@
             "name": "[variables('dscConfigurations').CertAuthConfig.name]"
           },
           "parameters": {
-            "configurationData": "[concat('{\"AllNodes\":{\"nodename\":\"localhost\"}}')]"
+            "configurationData": "[concat('{\"AllNodes\":{\"nodename\":\"localhost\",\"credname\":\"', variables('credName'), '\"}}')]"
           }
         }
       },
       {
-        "name": "[concat(parameters('automationAccountName'), '/', parameters('domainName'))]",
+        "name": "[variables('credName')]",
         "type": "Microsoft.Automation/automationAccounts/credentials",
         "apiVersion": "2015-10-31",
         "properties": {

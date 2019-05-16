@@ -1,8 +1,12 @@
 Configuration CertAuthConfig
 {
- 
+    # Parameter help description
+    param(
+        $credname
+    )
+
     #$domainCredential = Get-AzAutomationCredential -ResourceGroupName "infra" -AutomationAccountName "yubi-test" -Name "domainCredential"
-    $domainCredential = Get-AutomationPSCredential -Name "domainCredential"
+    $domainCredential = Get-AutomationPSCredential -Name $credname
 
     Import-DscResource -ModuleName ActiveDirectoryCSDsc
     Import-DscResource -ModuleName PSDesiredStateConfiguration
