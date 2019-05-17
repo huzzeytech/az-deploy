@@ -46,7 +46,7 @@
             "defaultValue": "BadAdmin"
         },
         "adminPassword": {
-            "type": "secureString",
+            "type": "securestring",
             "defaultValue": "BadAdminPass123"
         },
         "diagnosticsStorageAccountType": {
@@ -86,8 +86,6 @@
         "storageName": "[concat('sa', parameters('envid'))]",
         "scriptParameters": "[concat('-CustomDomain ', parameters('envid'))]",
         "scriptFileName": "init-domain.ps1",
-        "cascriptParameters": "[concat('-CustomDomain ', parameters('envid'))]",
-        "cascriptFileName": "init-ca.ps1",
         "dnsResourceGroup": "infra",
         "dnszones_yubi.fun_name": "yubi.fun",
         "domainname": "[concat(parameters('envid'), '-yubi.fun')]",
