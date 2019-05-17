@@ -119,7 +119,7 @@
                   "value": "[parameters('adminPassword')]"
                 },
                 "domainName": {
-                  "value": "[variables('domainName')]"
+                  "value": "[variables('netbios')]"
                 },
                 "location": {
                   "value": "[parameters('location')]"
