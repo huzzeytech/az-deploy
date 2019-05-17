@@ -19,13 +19,6 @@
       },
       "domainName": {
         "type": "string"
-      },
-      "compileName": {
-        "type": "string",
-        "defaultValue": "[guid(resourceGroup().id, deployment().name)]"
-      },
-      "envid": {
-        "type": "string"
       }
     },
     "variables": {
@@ -37,7 +30,8 @@
         }
       },
       "credUN": "[concat(parameters('domainName'), '\\', parameters('adminUsername'))]",
-      "credName": "[concat(parameters('automationAccountName'), '/', parameters('domainName'))]"
+      "credName": "[concat(parameters('automationAccountName'), '/', parameters('domainName'))]",
+      "compilename": "[concat('compile-', parameters('domainName'))]"
     },
     "resources": [
       {
@@ -55,7 +49,7 @@
         }
       },
       {
-        "name": "[concat(parameters('automationAccountName'), '/', parameters('compilename'))]",
+        "name": "[concat(parameters('automationAccountName'), '/', variables('compilename'))]",
         "type": "Microsoft.Automation/automationAccounts/compilationjobs",
         "apiVersion": "2018-01-15",
         "tags": {},
