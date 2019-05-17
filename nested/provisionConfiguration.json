@@ -59,12 +59,15 @@
         "type": "Microsoft.Automation/automationAccounts/compilationjobs",
         "apiVersion": "2018-01-15",
         "tags": {},
+        "dependsOn": [
+          "[concat('Microsoft.Automation/automationAccounts/yubi-test/credentials/', parameters('domainName'))]"
+        ],
         "properties": {
           "configuration": {
             "name": "[variables('dscConfigurations').CertAuthConfig.name]"
           },
           "parameters": {
-            "configurationData": "[concat('{\"AllNodes\":{\"nodename\":\"localhost\"}}')]"
+            "configurationData": "[concat('{\"AllNodes\":{\"nodename\":\"localhost\",\"credname\":\"', parameters('domainName'), '\"}}')]"
           }
         }
       },
