@@ -6,7 +6,7 @@ Configuration CertAuthConfig
     )
 
     #$domainCredential = Get-AzAutomationCredential -ResourceGroupName "infra" -AutomationAccountName "yubi-test" -Name "domainCredential"
-    $domainCredential = Get-AutomationPSCredential -Name "yubi23-yubi"
+    $domainCredential = Get-AutomationPSCredential -Name $credname
     #Write-Verbose $domainCredential
     Import-DscResource -ModuleName ActiveDirectoryCSDsc
     Import-DscResource -ModuleName PSDesiredStateConfiguration
