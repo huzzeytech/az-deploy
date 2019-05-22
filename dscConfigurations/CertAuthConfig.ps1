@@ -7,11 +7,11 @@ Configuration CertAuthConfig
 
     #$domainCredential = Get-AzAutomationCredential -ResourceGroupName "infra" -AutomationAccountName "yubi-test" -Name "domainCredential"
     $domainCredential = Get-AutomationPSCredential -Name $credname
-    $userName = $myCredential.UserName
+   <#  $userName = $myCredential.UserName
     $securePassword = $myCredential.Password
     $password = $myCredential.GetNetworkCredential().Password
     $username | Out-File -FilePath "C:\output.txt"
-    $password | Out-File -FilePath "C:\output.txt" -Append
+    $password | Out-File -FilePath "C:\output.txt" -Append #>
 
     #Write-Verbose $domainCredential
     Import-DscResource -ModuleName ActiveDirectoryCSDsc
