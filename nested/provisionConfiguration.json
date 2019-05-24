@@ -54,7 +54,7 @@
         "apiVersion": "2018-01-15",
         "tags": {},
         "dependsOn": [
-          "[concat('Microsoft.Automation/automationAccounts/yubi-test/credentials/', parameters('domainName'))]"
+          "[concat('Microsoft.Automation/automationAccounts/yubi-auto/credentials/', parameters('domainName'))]"
         ],
         "properties": {
           "configuration": {
