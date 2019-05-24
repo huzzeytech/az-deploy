@@ -91,7 +91,7 @@
         "domainname": "[concat(parameters('envid'), '-yubi.fun')]",
         "netbios": "[concat(parameters('envid'), '-yubi')]",
         "provisionConfigurationURL": "[uri(parameters('_artifactsLocation'), concat('nested/provisionConfiguration.json'))]",
-        "automationAccountName": "yubi-test"
+        "automationAccountName": "yubi-auto"
     },
     "resources": [
         {
@@ -616,7 +616,8 @@
             "apiVersion": "2017-12-01",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('caname'), '/extensions/joindomain')]"              
+                "[concat('Microsoft.Compute/virtualMachines/', variables('caname'), '/extensions/joindomain')]",
+                "provisionConfiguration"              
             ],
             "properties": {
               "publisher": "Microsoft.Powershell",
@@ -625,7 +626,7 @@
               "autoUpgradeMinorVersion": true,
               "protectedSettings": {
                 "Items": {
-                  "registrationKeyPrivate": "[listKeys('/subscriptions/5c134fa3-e537-4bb7-9857-6f3cad39a5cb/resourceGroups/infra/providers/Microsoft.Automation/automationAccounts/yubi-test', '2018-01-15').Keys[0].value]"
+                  "registrationKeyPrivate": "[listKeys('/subscriptions/5c134fa3-e537-4bb7-9857-6f3cad39a5cb/resourceGroups/infra/providers/Microsoft.Automation/automationAccounts/yubi-auto', '2018-01-15').Keys[0].value]"
                 }
               },
               "settings": {
@@ -640,7 +641,7 @@
                   },
                   {
                     "Name": "RegistrationUrl",
-                    "Value": "[reference('/subscriptions/5c134fa3-e537-4bb7-9857-6f3cad39a5cb/resourceGroups/infra/providers/Microsoft.Automation/automationAccounts/yubi-test', '2018-01-15').registrationUrl]",
+                    "Value": "[reference('/subscriptions/5c134fa3-e537-4bb7-9857-6f3cad39a5cb/resourceGroups/infra/providers/Microsoft.Automation/automationAccounts/yubi-auto', '2018-01-15').registrationUrl]",
                     "TypeName": "System.String"
                   },
                   {
