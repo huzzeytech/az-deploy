@@ -2,11 +2,10 @@ Configuration CertAuthConfig
 {
     $domainCredential = Get-AutomationPSCredential 'yubi37-yubi'
 
-    #Write-Verbose $domainCredential
     Import-DscResource -ModuleName ActiveDirectoryCSDsc
     Import-DscResource -ModuleName PSDesiredStateConfiguration
  
-     Node $AllNodes.NodeName
+     Node localhost
      {
 
         # Install the ADCS Certificate Authority
@@ -30,7 +29,7 @@ Configuration CertAuthConfig
             DependsOn = '[WindowsFeature]ADCSCA' 
         }
  
-            WindowsFeature RSAT-ADCS 
+        WindowsFeature RSAT-ADCS 
         { 
             Ensure = 'Present' 
             Name = 'RSAT-ADCS' 

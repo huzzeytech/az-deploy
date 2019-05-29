@@ -59,9 +59,6 @@
         "properties": {
           "configuration": {
             "name": "[variables('dscConfigurations').CertAuthConfig.name]"
-          },
-          "parameters": {
-            "configurationData": "[concat('{\"AllNodes\":{\"nodename\":\"localhost\"}}')]"
           }
         }
       },
