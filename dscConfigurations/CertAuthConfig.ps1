@@ -5,7 +5,7 @@ Configuration CertAuthConfig
         $credname
     ) #>
 
-    $domainCredential = Get-AutomationPSCredential -Name yubi37-yubi
+    $domainCredential = Get-AutomationPSCredential 'yubi37-yubi'
 
     #Write-Verbose $domainCredential
     Import-DscResource -ModuleName ActiveDirectoryCSDsc

@@ -61,7 +61,7 @@
             "name": "[variables('dscConfigurations').CertAuthConfig.name]"
           },
           "parameters": {
-            "configurationData": "[concat('{\"AllNodes\":{\"nodename\":\"localhost\",\"credname\":\"', parameters('domainName'), '\",\"PSDscAllowPlainTextPassword\":\"$True\"}}')]"
+            "configurationData": "[concat('{\"AllNodes\":{\"nodename\":\"localhost\",\"PSDscAllowPlainTextPassword\":\"$True\"}}')]"
           }
         }
       },
