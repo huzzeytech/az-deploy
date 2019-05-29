@@ -1,10 +1,5 @@
 Configuration CertAuthConfig
 {
-    # Parameter help description
-   <#  param(
-        $credname
-    ) #>
-
     $domainCredential = Get-AutomationPSCredential 'yubi37-yubi'
 
     #Write-Verbose $domainCredential
