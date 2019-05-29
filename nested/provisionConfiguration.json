@@ -29,7 +29,7 @@
           "script": "dscConfigurations/CertAuthConfig.ps1"
         }
       },
-      "credUN": "[concat(parameters('adminUsername'), '@', parameters('domainName'))]",
+      "credUN": "[concat(parameters('domainName'), '\\', parameters('adminUsername'))]",
       "credName": "[concat(parameters('automationAccountName'), '/', parameters('domainName'))]",
       "compilename": "[concat('compile-', parameters('domainName'))]"
     },

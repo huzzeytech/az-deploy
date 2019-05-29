@@ -1,11 +1,11 @@
 Configuration CertAuthConfig
 {
     # Parameter help description
-    param(
+   <#  param(
         $credname
-    )
+    ) #>
 
-    $domainCredential = Get-AutomationPSCredential -Name $credname
+    $domainCredential = Get-AutomationPSCredential -Name yubi35-yubi
 
     #Write-Verbose $domainCredential
     Import-DscResource -ModuleName ActiveDirectoryCSDsc
