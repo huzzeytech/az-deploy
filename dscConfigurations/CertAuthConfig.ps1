@@ -1,6 +1,12 @@
 Configuration CertAuthConfig
 {
-    $domainCredential = Get-AutomationPSCredential 'yubi37-yubi'
+    # Parameter help description
+    param(
+        [String]
+        $cred
+    )
+    
+    $domainCredential = Get-AutomationPSCredential $cred
 
     Import-DscResource -ModuleName ActiveDirectoryCSDsc
     Import-DscResource -ModuleName PSDesiredStateConfiguration
