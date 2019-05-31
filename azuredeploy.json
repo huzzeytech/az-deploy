@@ -609,65 +609,7 @@
                 "Password": "[parameters('adminPassword')]"
               }
             }
-          },
-          {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('caname'),'/OnboardToDSC')]",
-            "apiVersion": "2017-12-01",
-            "location": "[parameters('location')]",
-            "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('caname'), '/extensions/joindomain')]",
-                "provisionConfiguration"              
-            ],
-            "properties": {
-              "publisher": "Microsoft.Powershell",
-              "type": "DSC",
-              "typeHandlerVersion": "2.75",
-              "autoUpgradeMinorVersion": true,
-              "protectedSettings": {
-                "Items": {
-                  "registrationKeyPrivate": "[listKeys('/subscriptions/5c134fa3-e537-4bb7-9857-6f3cad39a5cb/resourceGroups/infra/providers/Microsoft.Automation/automationAccounts/yubi-auto', '2018-01-15').Keys[0].value]"
-                }
-              },
-              "settings": {
-                "Properties": [
-                  {
-                    "Name": "RegistrationKey",
-                    "Value": {
-                      "UserName": "PLACEHOLDER_DONOTUSE",
-                      "Password": "PrivateSettingsRef:registrationKeyPrivate"
-                    },
-                    "TypeName": "System.Management.Automation.PSCredential"
-                  },
-                  {
-                    "Name": "RegistrationUrl",
-                    "Value": "[reference('/subscriptions/5c134fa3-e537-4bb7-9857-6f3cad39a5cb/resourceGroups/infra/providers/Microsoft.Automation/automationAccounts/yubi-auto', '2018-01-15').registrationUrl]",
-                    "TypeName": "System.String"
-                  },
-                  {
-                    "Name": "NodeConfigurationName",
-                    "Value": "[parameters('nodeConfigurationName')]",
-                    "TypeName": "System.String"
-                  },
-                  {
-                    "Name": "ConfigurationMode",
-                    "Value": "ApplyandAutoCorrect",
-                    "TypeName": "System.String"
-                  },
-                  {
-                    "Name": "RebootNodeIfNeeded",
-                    "Value": true,
-                    "TypeName": "System.Boolean"
-                  },
-                  {
-                    "Name": "ActionAfterReboot",
-                    "Value": "ContinueConfiguration",
-                    "TypeName": "System.String"
-                  }
-                ]
-              }
-            }
-        }
+          }
     ],
     "outputs": {
         "adminUsername": {
