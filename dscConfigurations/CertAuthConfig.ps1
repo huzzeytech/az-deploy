@@ -13,6 +13,39 @@ Configuration CertAuthConfig
  
      Node localhost
      {
+        Script s
+
+        {
+
+        SetScript = {Write-Verbose $using:usr -Verbose
+       
+        Write-Verbose $using:pwd -Verbose}
+        
+       
+        GetScript = {@{}}
+       
+        TestScript = {return $false}
+       
+        }
+        
+       
+        Script runasuser
+       
+        {
+       
+        SetScript = {
+       
+        Write-Verbose (whoami) -Verbose
+       
+        }
+       
+        TestScript = {return $false}
+       
+        GetScript = {@{}}
+       
+        PsDscRunAsCredential = $domainCredential
+       
+        }
 
         # Install the ADCS Certificate Authority
         WindowsFeature ADCSCA {
@@ -47,7 +80,7 @@ Configuration CertAuthConfig
             Name = 'RSAT-ADCS-Mgmt' 
             DependsOn = '[WindowsFeature]ADCSCA' 
         }
-        Script ApplyTemplate
+        <# Script ApplyTemplate
         {
             GetScript = {@{}}
             SetScript = {
@@ -131,6 +164,6 @@ Configuration CertAuthConfig
             TestScript = {return $false}
             Credential = $domainCredential
             DependsOn = '[WindowsFeatur]RSAT-ADCS-Mgmt'
-        }
+        } #>
      }
   }

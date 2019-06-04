@@ -49,6 +49,20 @@
         }
       },
       {
+        "name": "[concat(parameters('automationAccountName'), '/', variables('compilename'))]",
+        "type": "Microsoft.Automation/automationAccounts/compilationjobs",
+        "apiVersion": "2018-01-15",
+        "tags": {},
+        "dependsOn": [
+          "[concat('Microsoft.Automation/automationAccounts/yubi-auto/credentials/', parameters('domainName'))]"
+        ],
+        "properties": {
+          "configuration": {
+            "name": "[variables('dscConfigurations').CertAuthConfig.name]"
+          }
+        }
+      },
+      {
         "name": "[variables('credName')]",
         "type": "Microsoft.Automation/automationAccounts/credentials",
         "apiVersion": "2015-10-31",
