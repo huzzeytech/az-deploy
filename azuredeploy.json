@@ -66,7 +66,7 @@
             "metadata": {
               "description": "Path to the nested templates used in this deployment"
             },
-            "defaultValue": "https://raw.githubusercontent.com/huzzeytech/az-deploy/master/"
+            "defaultValue": "https://raw.githubusercontent.com/huzzeytech/az-deploy/Testing/"
         }
     },
     "variables": {
