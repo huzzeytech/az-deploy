@@ -36,7 +36,8 @@ Invoke-Command -Credential $credential -ComputerName $computer -ArgumentList $PS
     } #>
 }
 
-<# $ConfigContext = ([ADSI]"LDAP://RootDSE").ConfigurationNamingContext 
+$SmartCardTemplateName = "YubiKey"
+$ConfigContext = ([ADSI]"LDAP://RootDSE").ConfigurationNamingContext 
 $ADSI = [ADSI]"LDAP://CN=Certificate Templates,CN=Public Key Services,CN=Services,$ConfigContext" 
 
 $NewTempl = $ADSI.Create("pKICertificateTemplate", "CN=$SmartCardTemplateName") 
@@ -110,4 +111,4 @@ $ACE = New-Object System.DirectoryServices.ActiveDirectoryAccessRule($identity,$
 $NewTempl.psbase.ObjectSecurity.SetAccessRule($ACE)
 $NewTempl.psbase.commitchanges()
 
-Add-CATemplate -Name $SmartCardTemplateName -force #> 
+Add-CATemplate -Name $SmartCardTemplateName -force 
