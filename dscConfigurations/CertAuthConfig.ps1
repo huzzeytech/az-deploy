@@ -130,7 +130,7 @@ Configuration CertAuthConfig
             }
             TestScript = {return $false}
             Credential = $domainCredential
-            DependsOn = '[WindowsFeatur]RSAT-ADCS-Mgmt'
+            DependsOn = '[WindowsFeature]RSAT-ADCS-Mgmt'
         }
      }
   }
