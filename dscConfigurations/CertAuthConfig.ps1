@@ -128,7 +128,18 @@ Configuration CertAuthConfig
 
                 Add-CATemplate -Name $SmartCardTemplateName -force
             }
-            TestScript = {return $false}
+            TestScript = {
+                
+                if(certutil -templatecas $SmartCardTemplateName | select-string  -simplematch "command completed successfully" -quiet)
+                {
+                    write-verbose "The certificate template is already present on this machine."
+                    return $true 
+                }
+                else {
+                    Write-Verbose "Need to fix certificate template."
+                    return $false
+                }
+            }
             Credential = $domainCredential
             DependsOn = '[WindowsFeature]RSAT-ADCS-Mgmt'
         }
