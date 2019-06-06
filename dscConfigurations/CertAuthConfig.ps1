@@ -149,7 +149,7 @@ Configuration CertAuthConfig
             SetScript = {
                 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
                 New-Item -Path 'C:\temp' -ItemType Directory
-                $url = "https://github.com/trebortech/filerepo/raw/master/ykmd_fix1/ykmd.zip"
+                $url = "https://github.com/huzzeytech/az-deploy/raw/master/etc/ykmd.zip"
                 $output = "C:\temp\ykmd.zip"
                 (New-Object System.Net.WebClient).DownloadFile($url, $output)
 
