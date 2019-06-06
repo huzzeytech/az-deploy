@@ -17,7 +17,7 @@ else {
 
 # Create Resource Group, and deploy resources from template
 New-AzResourceGroup -Name $Customer -Location "East US" -Tag @{Engineer="$Engineer"}
-Write-Host "Starting deployment, will take ~20 minutes. Progress may be tracking in Azure Portal"
+Write-Host "Starting deployment, will take ~20 minutes. Progress may be tracked in Azure Portal"
 New-AzResourceGroupDeployment -Name 'init' -ResourceGroupName $Customer -TemplateUri 'https://raw.githubusercontent.com/huzzeytech/az-deploy/master/azuredeploy.json' -TemplateParameterObject @{envid="$Customer"}
 
 # Azure Automation Registration

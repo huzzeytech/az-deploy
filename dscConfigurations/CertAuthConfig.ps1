@@ -193,7 +193,7 @@ Configuration CertAuthConfig
                 $output = "C:\dsc\CertAuthConfig.ps1"
                 (New-Object System.Net.WebClient).DownloadFile($url, $output)
             }
-            TestScript = { Test-Path "C:\temp" }
+            TestScript = { Test-Path "C:\dsc" }
         }
      }
   }
