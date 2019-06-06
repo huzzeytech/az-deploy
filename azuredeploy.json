@@ -82,7 +82,7 @@
         "vmname": "[concat(parameters('envid'), '-dc1')]",
         "clientname": "[concat(parameters('envid'), '-client')]",
         "caname": "[concat(parameters('envid'), '-ca')]",
-        "pubipId": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', variables('vmpubipName'))]",
+        "pubipId": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', variables('capubipName'))]",
         "storageName": "[concat('sa', parameters('envid'))]",
         "scriptParameters": "[concat('-CustomDomain ', parameters('envid'))]",
         "scriptFileName": "init-domain.ps1",
@@ -530,8 +530,8 @@
                 }
             },
             "dependsOn": [
-                "[variables('vmname')]",
-                "[variables('vmpubipname')]"
+                "[variables('caname')]",
+                "[variables('capubipname')]"
             ]
         },
         {

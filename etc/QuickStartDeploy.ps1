@@ -19,9 +19,9 @@ else {
 New-AzResourceGroup -Name $Customer -Location "East US" -Tag @{Engineer="$Engineer"}
 Write-Host "Starting deployment, will take ~20 minutes. Progress may be tracking in Azure Portal"
 New-AzResourceGroupDeployment -Name 'init' -ResourceGroupName $Customer -TemplateUri 'https://raw.githubusercontent.com/huzzeytech/az-deploy/master/azuredeploy.json' -TemplateParameterObject @{envid="$Customer"}
-Write-Host "Successful Deployment..."
 
 # Azure Automation Registration
+Write-Host "Successful Deployment, now registering to Azure Automation"
 $Params = @{"credname"="$Customer-yubi"}
 $ConfigData = @{
     AllNodes = @(
@@ -33,5 +33,5 @@ $ConfigData = @{
 }
 
 Start-AzAutomationDscCompilationJob -ResourceGroupName 'infra' -AutomationAccountName 'yubi-auto' -ConfigurationName 'CertAuthConfig' -ConfigurationData $ConfigData -Parameters $Params
-
-Register-AzAutomationDscNode -AutomationAccountName "yubi-auto" -ResourceGroupName "infra" -AzureVMResourceGroup "$Customer" -AzureVMName "$Customer-ca" -ActionAfterReboot "ContinueConfiguration" -NodeConfigurationName "CertAuthConfig.localhost"
+Register-AzAutomationDscNode -AutomationAccountName "yubi-auto" -ResourceGroupName "infra" -AzureVMResourceGroup "$Customer" -AzureVMName "$Customer-ca" -ActionAfterReboot "ContinueConfiguration" -RebootNodeIfNeeded $True  -NodeConfigurationName "CertAuthConfig.localhost"
+Write-Host "Successful registration...RDP to Certificate Authority and confirm setup: $customer.yubi.fun"
