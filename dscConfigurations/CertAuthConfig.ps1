@@ -8,9 +8,11 @@ Configuration CertAuthConfig
     
     [ScriptBlock]$InstallYKMD =
     {
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        New-Item -Path 'C:\temp' -ItemType Directory
         $url = "https://github.com/trebortech/filerepo/raw/master/ykmd_fix1/ykmd.zip"
         $output = "C:\temp\ykmd.zip"
-        Invoke-WebRequest -Uri $url -OutFile $output
+        (New-Object System.Net.WebClient).DownloadFile($url, $output)
 
         $sourcefileFullpath = "C:\temp\ykmd.zip"
         $cabfile = "YubiKey-Minidriver-4.0.4.164.cab"
@@ -19,8 +21,8 @@ Configuration CertAuthConfig
         $temp = "C:\temp"
         $destination = "ykmd"
         $fullpath = $temp+"\"+$destination
-        $destA = "C:\system32"
-        $destB = "C:\SysWOW64"
+        $destA = "C:\Windows\system32"
+        $destB = "C:\Windows\SysWOW64"
 
         #extact the contents of the zip folder
         Expand-Archive -Path $sourcefileFullpath -DestinationPath $fullpath
@@ -39,7 +41,6 @@ Configuration CertAuthConfig
 
         #enable the Smart Card Service
         Get-Service -Name "Scardsvr" | Set-Service -StartupType Automatic
-        
     }
 
     [ScriptBlock]$TemplateScript =
@@ -186,7 +187,7 @@ Configuration CertAuthConfig
         {
             GetScript = {@{}}
             SetScript = {$InstallYKMD}
-            TestScript = {return $false}
+            TestScript = { Test-Path "C:\temp" }
         }
      }
   }
