@@ -158,7 +158,7 @@ Configuration CertAuthConfig
                     param(
                         [parameter(Mandatory)]
                         [string]$DisplayName,
-                        [string]$Server = (Get-ADDomainController -Discover -ForceDiscover -Writable).HostName[0],
+                        [string]$Server = 'dc1',
                         #[string[]]$GroupName = "$((Get-ADDomain).NetBIOSName)\Authenticated Users",
                         [string[]]$GroupName = "Authenticated Users",
                         [switch]$EOB,
@@ -287,7 +287,7 @@ Configuration CertAuthConfig
                 }
             }
             Credential = $domainCredential
-            DependsOn = '[WindowsFeature]RSAT-ADCS-Mgmt', '[Script]InstallYKMD'
+            DependsOn = '[WindowsFeature]RSAT-ADCS-Mgmt', '[Script]InstallYKMD', '[WindowsFeature]RSAT-AD-PowerShell'
         }
         Script InstallYKMD
         {
