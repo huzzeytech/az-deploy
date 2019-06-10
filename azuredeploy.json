@@ -79,7 +79,6 @@
         "clientpubipName": "[concat(parameters('envid'), '-clientip1')]",
         "vmname": "[concat(parameters('envid'), '-dc1')]",
         "clientname": "[concat(parameters('envid'), '-client')]",
-        "caname": "[concat(parameters('envid'), '-ca')]",
         "clientpubipId": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', variables('clientpubipName'))]",
         "storageName": "[concat('sa', parameters('envid'))]",
         "scriptParameters": "[concat('-CustomDomain ', parameters('envid'))]",
