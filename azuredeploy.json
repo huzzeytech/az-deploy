@@ -75,14 +75,12 @@
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
         "vmnic": "[concat(parameters('envid'), '-dcnic1')]",
         "clientnic": "[concat(parameters('envid'), '-clientnic1')]",
-        "canic": "[concat(parameters('envid'), '-canic1')]",
         "vmpubipName": "[concat(parameters('envid'), '-dcip1')]",
         "clientpubipName": "[concat(parameters('envid'), '-clientip1')]",
-        "capubipName": "[concat(parameters('envid'), '-caip1')]",
         "vmname": "[concat(parameters('envid'), '-dc1')]",
         "clientname": "[concat(parameters('envid'), '-client')]",
         "caname": "[concat(parameters('envid'), '-ca')]",
-        "pubipId": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', variables('capubipName'))]",
+        "clientpubipId": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', variables('clientpubipName'))]",
         "storageName": "[concat('sa', parameters('envid'))]",
         "scriptParameters": "[concat('-CustomDomain ', parameters('envid'))]",
         "scriptFileName": "init-domain.ps1",
@@ -202,45 +200,6 @@
             }
         },
         {
-            "name": "[variables('canic')]",
-            "type": "Microsoft.Network/networkInterfaces",
-            "apiVersion": "2018-10-01",
-            "location": "[parameters('location')]",
-            "dependsOn": [
-                "[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]",
-                "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]",
-                "[concat('Microsoft.Network/publicIpAddresses/', variables('capubipName'))]"
-            ],
-            "properties": {
-                "ipConfigurations": [
-                    {
-                        "name": "ipconfig3",
-                        "properties": {
-                            "subnet": {
-                                "id": "[variables('subnetRef')]"
-                            },
-                            "privateIPAddress": "10.0.16.10",
-                            "privateIPAllocationMethod": "Static",
-                            "publicIpAddress": {
-                                "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', variables('capubipname'))]"
-                            }
-                        }
-                    }
-                ],
-                "networkSecurityGroup": {
-                    "id": "[variables('nsgId')]"
-                },
-                "dnsSettings": {
-                    "dnsServers": [
-                      "10.0.16.5"
-                    ]
-                }
-            },
-            "tags": {
-                "Project": "yubi-azure"
-            }
-        },
-        {
             "name": "[parameters('networkSecurityGroupName')]",
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2018-08-01",
@@ -306,21 +265,6 @@
         },
         {
             "name": "[variables('clientpubipname')]",
-            "type": "Microsoft.Network/publicIpAddresses",
-            "apiVersion": "2018-08-01",
-            "location": "[parameters('location')]",
-            "properties": {
-                "publicIpAllocationMethod": "[parameters('publicIpAddressType')]"
-            },
-            "sku": {
-                "name": "[parameters('publicIpAddressSku')]"
-            },
-            "tags": {
-                "Project": "yubi-azure"
-            }
-        },
-        {
-            "name": "[variables('capubipname')]",
             "type": "Microsoft.Network/publicIpAddresses",
             "apiVersion": "2018-08-01",
             "location": "[parameters('location')]",
@@ -438,56 +382,6 @@
             }
         },
         {
-            "name": "[variables('caname')]",
-            "type": "Microsoft.Compute/virtualMachines",
-            "apiVersion": "2018-06-01",
-            "location": "[parameters('location')]",
-            "dependsOn": [
-                "[concat('Microsoft.Network/networkInterfaces/', variables('canic'))]",
-                "[concat('Microsoft.Storage/storageAccounts/', variables('storageName'))]"],
-            "properties": {
-                "hardwareProfile": {
-                    "vmSize": "[parameters('virtualMachineSize')]"
-                },
-                "storageProfile": {
-                    "imageReference": {
-                        "publisher": "MicrosoftWindowsServer",
-                        "offer": "WindowsServer",
-                        "sku": "2016-Datacenter",
-                        "version": "latest"
-                    },
-                    "osDisk": {
-                        "createOption": "FromImage"
-                    }
-                },
-                "networkProfile": {
-                    "networkInterfaces": [
-                        {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('canic'))]"
-                        }
-                    ]
-                },
-                "osProfile": {
-                    "computerName": "ca1",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]",
-                    "windowsConfiguration": {
-                        "enableAutomaticUpdates": true,
-                        "provisionVmAgent": true
-                    }
-                },
-                "diagnosticsProfile": {
-                    "bootDiagnostics": {
-                        "enabled": true,
-                        "storageUri": "[concat('https://', variables('storageName'), '.blob.core.windows.net/')]"
-                    }
-                }
-            },
-            "tags": {
-                "Project": "yubi-azure"
-            }
-        },
-        {
             "name": "[variables('storageName')]",
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2018-07-01",
@@ -522,7 +416,7 @@
                                 "metadata": {},
                                 "TTL": 3600,
                                 "targetResource": {
-                                    "id": "[variables('pubipId')]"
+                                    "id": "[variables('clientpubipId')]"
                                 }
                             }
                         }
@@ -530,8 +424,8 @@
                 }
             },
             "dependsOn": [
-                "[variables('caname')]",
-                "[variables('capubipname')]"
+                "[variables('vmname')]",
+                "[variables('clientpubipname')]"
             ]
         },
         {
@@ -563,35 +457,10 @@
         {
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('caname'), '/joindomain')]",
-            "location": "[parameters('location')]",
-            "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('clientname'))]",
-                "[concat('Microsoft.Compute/virtualMachines/', variables('vmname'), '/extensions/createdomain')]"
-            ],
-            "properties": {
-              "publisher": "Microsoft.Compute",
-              "type": "JsonADDomainExtension",
-              "typeHandlerVersion": "1.3",
-              "autoUpgradeMinorVersion": true,
-              "settings": {
-                "Name": "[variables('domainname')]",
-                "User": "[concat(variables('netbios'), '\\', parameters('adminUsername'))]",
-                "Restart": "true",
-                "Options": "3"
-              },
-              "protectedSettings": {
-                "Password": "[parameters('adminPassword')]"
-              }
-            }
-        },
-        {
-            "apiVersion": "2015-06-15",
-            "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(variables('clientname'), '/joindomain')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('caname'), '/extensions/joindomain')]"
+                "[concat('Microsoft.Compute/virtualMachines/', variables('clientname'))]"
             ],
             "properties": {
               "publisher": "Microsoft.Compute",
