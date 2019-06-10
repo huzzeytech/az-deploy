@@ -30,8 +30,7 @@
         }
       },
       "credUN": "[concat(parameters('domainName'), '\\', parameters('adminUsername'))]",
-      "credName": "[concat(parameters('automationAccountName'), '/', parameters('domainName'))]",
-      "compilename": "[concat('compile-', parameters('domainName'))]"
+      "credName": "[concat(parameters('automationAccountName'), '/', parameters('domainName'))]"
     },
     "resources": [
       {
