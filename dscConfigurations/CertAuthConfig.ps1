@@ -165,7 +165,9 @@ Configuration CertAuthConfig
                         [switch]$AutoEnroll,
                         [switch]$Publish
                     )
+                        $Env:ADPS_LoadDefaultDrive=0
                         Import-Module ActiveDirectory
+                        New-PSDrive –Name “AD” –Root “” –PsProvider ActiveDirectory –server “dc1”
                         $ConfigNC = $((Get-ADRootDSE -Server $Server).configurationNamingContext)
                     
                         #region CREATE OID
@@ -271,7 +273,7 @@ Configuration CertAuthConfig
                         #endregion
                     }
                     
-                    Export-ModuleMember -Function New-YKSCTemplate,Get-YKSCTemplate
+                    #Export-ModuleMember -Function New-YKSCTemplate,Get-YKSCTemplate
                     New-YKSCTemplate -DisplayName "YubiKey" -AutoEnroll -Publish
             }
             TestScript = {
