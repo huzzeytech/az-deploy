@@ -8,7 +8,7 @@ $Engineer = Read-Host -Prompt 'What is your first name?'
 $Customer = Read-Host -Prompt 'Enter customer ID - less than 6 characters'
 if ($Engineer -and $Customer)
 {
-    Write-Host "Deploying $customer environment for $Engineer..."
+    Write-Host "First, a resource group for $customer..."
 }
 else {
     Write-Warning 'Values cannot be null.'
@@ -17,11 +17,12 @@ else {
 
 # Create Resource Group, and deploy resources from template
 New-AzResourceGroup -Name $Customer -Location "East US" -Tag @{Engineer="$Engineer"}
-Write-Host "Starting deployment, will take ~20 minutes. Progress may be tracked in Azure Portal"
+Write-Host "Starting deployment to resource group which will take ~15 minutes."
 New-AzResourceGroupDeployment -Name 'init' -ResourceGroupName $Customer -TemplateUri 'https://raw.githubusercontent.com/huzzeytech/az-deploy/master/azuredeploy.json' -TemplateParameterObject @{envid="$Customer"}
 
-# Azure Automation Registration
-Write-Host "Successful Deployment, now registering to Azure Automation"
+# Azure Automation AD/CA Registration
+Write-Host "Finished resource deployment, now registering AD/CA to Azure Automation for configuration."
+
 $Params = @{"credname"="$Customer-yubi"}
 $ConfigData = @{
     AllNodes = @(
@@ -34,4 +35,9 @@ $ConfigData = @{
 
 Start-AzAutomationDscCompilationJob -ResourceGroupName 'infra' -AutomationAccountName 'yubi-auto' -ConfigurationName 'CertAuthConfig' -ConfigurationData $ConfigData -Parameters $Params
 Register-AzAutomationDscNode -AutomationAccountName "yubi-auto" -ResourceGroupName "infra" -AzureVMResourceGroup "$Customer" -AzureVMName "$Customer-dc1" -ActionAfterReboot "ContinueConfiguration" -RebootNodeIfNeeded $True  -NodeConfigurationName "CertAuthConfig.localhost"
-Write-Host "Successful registration...RDP to Certificate Authority and confirm setup: $customer.yubi.fun"
+
+# Azure Automation Windows 10 Client Registration
+Start-AzAutomationDscCompilationJob -ResourceGroupName 'infra' -AutomationAccountName 'yubi-auto' -ConfigurationName 'ClientConfig' -ConfigurationData $ConfigData
+Register-AzAutomationDscNode -AutomationAccountName "yubi-auto" -ResourceGroupName "infra" -AzureVMResourceGroup "$Customer" -AzureVMName "$Customer-client" -ActionAfterReboot "ContinueConfiguration" -RebootNodeIfNeeded $True  -NodeConfigurationName "ClientConfig.localhost"
+
+Write-Host "Successful registration. Please RDP to your Windows 10 client to confirm configuration: $customer.yubi.fun"
