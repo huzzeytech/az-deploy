@@ -4,11 +4,11 @@
 # --------------------
 
 # Get engineer name for tagging, and customer for unique identifier
-$Engineer = Read-Host -Prompt 'What is your first name?'
-$Customer = Read-Host -Prompt 'Enter customer ID - less than 6 characters'
+$Engineer = Read-Host -Prompt 'Enter your first name for tagging purposes:'
+$Customer = Read-Host -Prompt 'Enter customer ID <= 6 characters:'
 if ($Engineer -and $Customer)
 {
-    Write-Host "First, a resource group for $customer..."
+    Write-Host "First up, a resource group for $customer..."
 }
 else {
     Write-Warning 'Values cannot be null.'
@@ -17,11 +17,11 @@ else {
 
 # Create Resource Group, and deploy resources from template
 New-AzResourceGroup -Name $Customer -Location "East US" -Tag @{Engineer="$Engineer"}
-Write-Host "Starting deployment to resource group which will take ~15 minutes."
+Write-Host "Kicking off the resource deployment to the new group which will take ~15 minutes."
 New-AzResourceGroupDeployment -Name 'init' -ResourceGroupName $Customer -TemplateUri 'https://raw.githubusercontent.com/huzzeytech/az-deploy/master/azuredeploy.json' -TemplateParameterObject @{envid="$Customer"}
 
 # Azure Automation AD/CA Registration
-Write-Host "Finished resource deployment, now registering AD/CA to Azure Automation for configuration."
+Write-Host "Finished resource deployment, now registering machines to Azure Automation for configuration."
 
 $Params = @{"credname"="$Customer-yubi"}
 $ConfigData = @{
