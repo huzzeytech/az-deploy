@@ -25,8 +25,13 @@
       "dscConfigurations": {
         "CertAuthConfig": {
           "name": "CertAuthConfig",
-          "description": "minimum viable configuration for a domain controller role",
+          "description": "minimum viable configuration for AD/CA",
           "script": "dscConfigurations/CertAuthConfig.ps1"
+        },
+        "ClientConfig": {
+          "name": "ClientConfig",
+          "description": "Client Customization",
+          "script": "dscConfigurations/ClientConfig.ps1"
         }
       },
       "credUN": "[concat(parameters('domainName'), '\\', parameters('adminUsername'))]",
@@ -44,6 +49,20 @@
           "source": {
             "type": "uri",
             "value": "[concat(parameters('_artifactsLocation'), variables('dscConfigurations').CertAuthConfig.script)]"
+          }
+        }
+      },
+      {
+        "name": "[concat(parameters('automationAccountName'), '/', variables('dscConfigurations').ClientConfig.name)]",
+        "type": "Microsoft.Automation/automationAccounts/configurations",
+        "apiVersion": "2015-10-31",
+        "location": "[parameters('location')]",
+        "properties": {
+          "state": "Published",
+          "overwrite": "true",
+          "source": {
+            "type": "uri",
+            "value": "[concat(parameters('_artifactsLocation'), variables('dscConfigurations').ClientConfig.script)]"
           }
         }
       },
