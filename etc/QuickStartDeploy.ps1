@@ -4,8 +4,8 @@
 # --------------------
 
 # Get engineer name for tagging, and customer for unique identifier
-$Engineer = Read-Host -Prompt 'Enter your first name for tagging purposes:'
-$Customer = Read-Host -Prompt 'Enter customer ID <= 6 characters:'
+$Engineer = Read-Host -Prompt 'Enter your first name for tagging purposes'
+$Customer = Read-Host -Prompt 'Enter customer ID <= 6 characters'
 if ($Engineer -and $Customer)
 {
     Write-Host "First up, a resource group for $customer..."
