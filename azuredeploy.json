@@ -120,6 +120,9 @@
                 },
                 "location": {
                   "value": "[parameters('location')]"
+                },
+                "envid": {
+                    "value": "[parameters('envid')]"
                 }
               }
             }
