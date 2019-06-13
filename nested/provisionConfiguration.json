@@ -19,20 +19,17 @@
       },
       "domainName": {
         "type": "string"
-      },
-      "envid": {
-        "type": "string"
       }
     },
     "variables": {
       "dscConfigurations": {
         "CertAuthConfig": {
-          "name": "[concat(parameters('envid'), '-CertAuthConfig')]",
+          "name": "CertAuthConfig",
           "description": "minimum viable configuration for AD/CA",
           "script": "dscConfigurations/CertAuthConfig.ps1"
         },
         "ClientConfig": {
-          "name": "[concat(parameters('envid'), '-ClientConfig')]",
+          "name": "ClientConfig",
           "description": "Client Customization",
           "script": "dscConfigurations/ClientConfig.ps1"
         }
