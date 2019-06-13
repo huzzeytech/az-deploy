@@ -65,16 +65,6 @@
             "value": "[concat(parameters('_artifactsLocation'), variables('dscConfigurations').ClientConfig.script)]"
           }
         }
-      },
-      {
-        "name": "[variables('credName')]",
-        "type": "Microsoft.Automation/automationAccounts/credentials",
-        "apiVersion": "2015-10-31",
-        "properties": {
-          "userName": "[variables('credUN')]",
-          "password": "[parameters('adminPassword')]",
-          "description": "Elevated Credential"
-        }
       }
     ],
     "outputs": {}

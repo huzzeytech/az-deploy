@@ -25,7 +25,7 @@ New-AzResourceGroupDeployment -Name 'init' -ResourceGroupName $Customer -Templat
 # Azure Automation AD/CA Registration
 Write-Host "Finished resource deployment, now registering machines to Azure Automation for configuration."
 
-$Params = @{"credname"="$Customer-yubi"}
+$Params = @{"credname"="BadAdmin"}
 $ConfigData = @{
     AllNodes = @(
         @{
@@ -39,6 +39,7 @@ Start-AzAutomationDscCompilationJob -ResourceGroupName 'infra' -AutomationAccoun
 Register-AzAutomationDscNode -AutomationAccountName "yubi-auto" -ResourceGroupName "infra" -AzureVMResourceGroup "$Customer" -AzureVMName "$Customer-dc1" -ActionAfterReboot "ContinueConfiguration" -RebootNodeIfNeeded $True  -NodeConfigurationName "CertAuthConfig.localhost"
 
 # Azure Automation Windows 10 Client Registration
+
 Start-AzAutomationDscCompilationJob -ResourceGroupName 'infra' -AutomationAccountName 'yubi-auto' -ConfigurationName 'ClientConfig' -ConfigurationData $ConfigData
 Register-AzAutomationDscNode -AutomationAccountName "yubi-auto" -ResourceGroupName "infra" -AzureVMResourceGroup "$Customer" -AzureVMName "$Customer-client" -ActionAfterReboot "ContinueConfiguration" -RebootNodeIfNeeded $True  -NodeConfigurationName "ClientConfig.localhost"
 
