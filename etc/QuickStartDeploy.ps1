@@ -17,7 +17,14 @@ else {
     break
 }
 
-# Create Resource Group, and deploy resources from template
+# Check to see if customer ID already exists
+if ((Get-AzResourceGroup | where resourcegroupname -like $Customer) -ne $null)
+{
+    Write-Warning 'That customer ID already exists.'
+    break
+}
+
+# Create Resource Group, deploy resources
 New-AzResourceGroup -Name $Customer -Location "East US" -Tag @{Engineer="$Engineer"}
 Write-Host "Kicking off the resource deployment to the new group which will take ~15 minutes."
 New-AzResourceGroupDeployment -Name 'init' -ResourceGroupName $Customer -TemplateUri 'https://raw.githubusercontent.com/huzzeytech/az-deploy/master/azuredeploy.json' -TemplateParameterObject @{envid="$Customer"}
@@ -39,7 +46,6 @@ $ConfigData = @{
 Register-AzAutomationDscNode -AutomationAccountName "yubi-auto" -ResourceGroupName "infra" -AzureVMResourceGroup "$Customer" -AzureVMName "$Customer-dc1" -ActionAfterReboot "ContinueConfiguration" -RebootNodeIfNeeded $True  -NodeConfigurationName "CertAuthConfig.localhost"
 
 # Azure Automation Windows 10 Client Registration
-
 #Start-AzAutomationDscCompilationJob -ResourceGroupName 'infra' -AutomationAccountName 'yubi-auto' -ConfigurationName 'ClientConfig' -ConfigurationData $ConfigData
 Register-AzAutomationDscNode -AutomationAccountName "yubi-auto" -ResourceGroupName "infra" -AzureVMResourceGroup "$Customer" -AzureVMName "$Customer-client" -ActionAfterReboot "ContinueConfiguration" -RebootNodeIfNeeded $True  -NodeConfigurationName "ClientConfig.localhost"
 
