@@ -88,7 +88,7 @@
         "domainname": "[concat(parameters('envid'), '-yubi.fun')]",
         "netbios": "[concat(parameters('envid'), '-yubi')]",
         "provisionConfigurationURL": "[uri(parameters('_artifactsLocation'), concat('nested/provisionConfiguration.json'))]",
-        "automationAccountName": "yubi-auto"
+        "automationAccountName": "[concat(parameters('envid'), '-auto')]"
     },
     "resources": [
         {
