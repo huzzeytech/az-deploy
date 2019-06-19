@@ -42,6 +42,7 @@
         "name": "[parameters('automationAccountName')]",
         "type": "Microsoft.Automation/automationAccounts",
         "apiVersion": "2015-10-31",
+        "location": "[parameters('location')]",
         "properties": {
           "sku": {
             "name": "Basic"
@@ -86,6 +87,9 @@
         "name": "[variables('credName')]",
         "type": "Microsoft.Automation/automationAccounts/credentials",
         "apiVersion": "2015-10-31",
+        "dependsOn": [
+          "[parameters('automationAccountName')]"
+        ],
         "properties": {
           "userName": "[variables('credUN')]",
           "password": "[parameters('adminPassword')]",
