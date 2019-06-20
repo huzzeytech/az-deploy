@@ -48,6 +48,7 @@ New-AzAutomationModule -Name ActiveDirectoryCSDsc -ContentLinkUri "https://githu
 
 # Compilation Jobs
 Start-AzAutomationDscCompilationJob -ResourceGroupName 'infra' -AutomationAccountName "$Customer-auto" -ConfigurationName "CertAuthConfig" -ConfigurationData $ConfigData -Parameters $Params
+Get-AzAutomationDscCompilationJob -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto" -ConfigurationName "CertAuthConfig"
 Start-AzAutomationDscCompilationJob -ResourceGroupName 'infra' -AutomationAccountName "$Customer-auto" -ConfigurationName 'ClientConfig' -ConfigurationData $ConfigData
 
 # Register Nodes

@@ -9,7 +9,7 @@ Configuration CertAuthConfig
     $domainCredential = Get-AutomationPSCredential $credname
 
     Import-DscResource -ModuleName ActiveDirectoryCSDsc
-    Import-DscResource -ModuleName PSDesiredStateConfiguration
+    Import-DscResource -ModuleName xPSDesiredStateConfiguration
  
      Node localhost
      {
