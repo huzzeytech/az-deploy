@@ -45,6 +45,14 @@ $ConfigData = @{
 
 # Import DSC Modules
 New-AzAutomationModule -Name ActiveDirectoryCSDsc -ContentLinkUri "https://github.com/huzzeytech/az-deploy/raw/IdvAutoAcct/etc/ActiveDirectoryCSDsc.zip" -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto"
+do {
+    $Status = Get-AzAutomationModule -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto" | Where-Object {$_.Name -eq "ActiveDirectoryCSDsc"} | Select-Object -ExpandProperty "ProvisioningState"
+} until ($Status -eq "Succeeded")
+
+New-AzAutomationModule -Name xPSDesiredStateConfiguration -ContentLinkUri "https://github.com/huzzeytech/az-deploy/raw/IdvAutoAcct/etc/xPSDesiredStateConfiguration.zip" -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto"
+do {
+    $Status = Get-AzAutomationModule -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto" | Where-Object {$_.Name -eq "xPSDesiredStateConfiguration"} | Select-Object -ExpandProperty "ProvisioningState"
+} until ($Status -eq "Succeeded")
 
 # Compilation Jobs
 Start-AzAutomationDscCompilationJob -ResourceGroupName 'infra' -AutomationAccountName "$Customer-auto" -ConfigurationName "CertAuthConfig" -ConfigurationData $ConfigData -Parameters $Params
@@ -56,5 +64,6 @@ Start-AzAutomationDscCompilationJob -ResourceGroupName 'infra' -AutomationAccoun
 Register-AzAutomationDscNode -AutomationAccountName "yubi-auto" -ResourceGroupName "infra" -AzureVMResourceGroup "$Customer" -AzureVMName "$Customer-dc1" -ActionAfterReboot "ContinueConfiguration" -RebootNodeIfNeeded $True  -NodeConfigurationName "CertAuthConfig.localhost"
 # Windows 10 Client
 Register-AzAutomationDscNode -AutomationAccountName "yubi-auto" -ResourceGroupName "infra" -AzureVMResourceGroup "$Customer" -AzureVMName "$Customer-client" -ActionAfterReboot "ContinueConfiguration" -RebootNodeIfNeeded $True  -NodeConfigurationName "ClientConfig.localhost"
+# After reg finished...wait 15 min or poll for DSC Status
 
-Write-Host "Successful registration. Please RDP to your Windows 10 client to confirm configuration: $customer.yubi.fun"
+Write-Host "Successful deployment. Please RDP to your Windows 10 client to confirm configuration: $customer.yubi.fun"
