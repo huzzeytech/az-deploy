@@ -27,7 +27,7 @@ if ((Get-AzResourceGroup | where resourcegroupname -like $Customer) -ne $null)
 # Create Resource Group, deploy resources
 New-AzResourceGroup -Name $Customer -Location "East US" -Tag @{Engineer="$Engineer"}
 Write-Host "Kicking off the resource deployment to the new group which will take ~15 minutes."
-New-AzResourceGroupDeployment -Name 'init' -ResourceGroupName $Customer -TemplateUri 'https://raw.githubusercontent.com/huzzeytech/az-deploy/master/azuredeploy.json' -TemplateParameterObject @{envid="$Customer"}
+New-AzResourceGroupDeployment -Name 'init' -ResourceGroupName $Customer -TemplateUri 'https://raw.githubusercontent.com/huzzeytech/az-deploy/IdvAutoAcct/azuredeploy.json' -TemplateParameterObject @{envid="$Customer"}
 
 # Azure Automation AD/CA Registration
 Write-Host "Finished resource deployment, now registering machines to Azure Automation for configuration."
