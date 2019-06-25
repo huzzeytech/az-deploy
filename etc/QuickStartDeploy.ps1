@@ -32,7 +32,8 @@ New-AzResourceGroupDeployment -Name 'init' -ResourceGroupName $Customer -Templat
 # Azure Automation AD/CA Registration
 Write-Host "Finished resource deployment, now registering machines to Azure Automation for configuration."
 
-$Params = @{"credname"="BadAdmin"}
+# Parameters for Compilation Jobs
+$Params = @{"credname"="$Customer-yubi"}
 $ConfigData = @{
     AllNodes = @(
         @{
@@ -42,11 +43,37 @@ $ConfigData = @{
     )
 }
 
-#Start-AzAutomationDscCompilationJob -ResourceGroupName 'infra' -AutomationAccountName 'yubi-auto' -ConfigurationName "CertAuthConfig" -ConfigurationData $ConfigData -Parameters $Params
+# Import DSC Modules
+New-AzAutomationModule -Name ActiveDirectoryCSDsc -ContentLinkUri "https://github.com/huzzeytech/az-deploy/raw/master/etc/ActiveDirectoryCSDsc.zip" -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto"
+do {
+    $StatusMod1 = Get-AzAutomationModule -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto" | Where-Object {$_.Name -eq "ActiveDirectoryCSDsc"} | Select-Object -ExpandProperty "ProvisioningState"
+    Start-Sleep -Seconds 3
+} until ($StatusMod1 -eq "Succeeded")
+
+New-AzAutomationModule -Name xPSDesiredStateConfiguration -ContentLinkUri "https://github.com/huzzeytech/az-deploy/raw/master/etc/xPSDesiredStateConfiguration.zip" -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto"
+do {
+    $StatusMod2 = Get-AzAutomationModule -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto" | Where-Object {$_.Name -eq "xPSDesiredStateConfiguration"} | Select-Object -ExpandProperty "ProvisioningState"
+    Start-Sleep -Seconds 3
+} until ($StatusMod2 -eq "Succeeded")
+
+# Compilation Jobs
+Start-AzAutomationDscCompilationJob -ResourceGroupName 'infra' -AutomationAccountName "$Customer-auto" -ConfigurationName "CertAuthConfig" -ConfigurationData $ConfigData -Parameters $Params
+do {
+    $StatusJob1 = Get-AzAutomationDscCompilationJob -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto" -ConfigurationName "CertAuthConfig" | Select-Object -ExpandProperty "Status"
+    Start-Sleep -Seconds 3
+} until ($StatusJob1 -eq "Completed")
+
+Start-AzAutomationDscCompilationJob -ResourceGroupName 'infra' -AutomationAccountName "$Customer-auto" -ConfigurationName 'ClientConfig' -ConfigurationData $ConfigData
+do {
+    $StatusJob2 = Get-AzAutomationDscCompilationJob -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto" -ConfigurationName "ClientConfig" | Select-Object -ExpandProperty "Status"
+    Start-Sleep -Seconds 3
+} until ($StatusJob2 -eq "Completed")
+
+# Register Nodes
+# DC/CA
 Register-AzAutomationDscNode -AutomationAccountName "yubi-auto" -ResourceGroupName "infra" -AzureVMResourceGroup "$Customer" -AzureVMName "$Customer-dc1" -ActionAfterReboot "ContinueConfiguration" -RebootNodeIfNeeded $True  -NodeConfigurationName "CertAuthConfig.localhost"
-
-# Azure Automation Windows 10 Client Registration
-#Start-AzAutomationDscCompilationJob -ResourceGroupName 'infra' -AutomationAccountName 'yubi-auto' -ConfigurationName 'ClientConfig' -ConfigurationData $ConfigData
+# Windows 10 Client
 Register-AzAutomationDscNode -AutomationAccountName "yubi-auto" -ResourceGroupName "infra" -AzureVMResourceGroup "$Customer" -AzureVMName "$Customer-client" -ActionAfterReboot "ContinueConfiguration" -RebootNodeIfNeeded $True  -NodeConfigurationName "ClientConfig.localhost"
+# After reg finished...wait 15 min or poll for DSC Status
 
-Write-Host "Successful registration. Please RDP to your Windows 10 client to confirm configuration: $customer.yubi.fun"
+Write-Host "Successful deployment. Please RDP to your Windows 10 client to confirm configuration: $customer.yubi.fun"
