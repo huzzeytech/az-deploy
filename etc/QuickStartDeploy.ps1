@@ -46,18 +46,28 @@ $ConfigData = @{
 # Import DSC Modules
 New-AzAutomationModule -Name ActiveDirectoryCSDsc -ContentLinkUri "https://github.com/huzzeytech/az-deploy/raw/IdvAutoAcct/etc/ActiveDirectoryCSDsc.zip" -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto"
 do {
-    $Status = Get-AzAutomationModule -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto" | Where-Object {$_.Name -eq "ActiveDirectoryCSDsc"} | Select-Object -ExpandProperty "ProvisioningState"
-} until ($Status -eq "Succeeded")
+    $StatusMod1 = Get-AzAutomationModule -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto" | Where-Object {$_.Name -eq "ActiveDirectoryCSDsc"} | Select-Object -ExpandProperty "ProvisioningState"
+    Start-Sleep -Seconds 3
+} until ($StatusMod1 -eq "Succeeded")
 
 New-AzAutomationModule -Name xPSDesiredStateConfiguration -ContentLinkUri "https://github.com/huzzeytech/az-deploy/raw/IdvAutoAcct/etc/xPSDesiredStateConfiguration.zip" -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto"
 do {
-    $Status = Get-AzAutomationModule -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto" | Where-Object {$_.Name -eq "xPSDesiredStateConfiguration"} | Select-Object -ExpandProperty "ProvisioningState"
-} until ($Status -eq "Succeeded")
+    $StatusMod2 = Get-AzAutomationModule -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto" | Where-Object {$_.Name -eq "xPSDesiredStateConfiguration"} | Select-Object -ExpandProperty "ProvisioningState"
+    Start-Sleep -Seconds 3
+} until ($StatusMod2 -eq "Succeeded")
 
 # Compilation Jobs
 Start-AzAutomationDscCompilationJob -ResourceGroupName 'infra' -AutomationAccountName "$Customer-auto" -ConfigurationName "CertAuthConfig" -ConfigurationData $ConfigData -Parameters $Params
-Get-AzAutomationDscCompilationJob -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto" -ConfigurationName "CertAuthConfig"
+do {
+    $StatusJob1 = Get-AzAutomationDscCompilationJob -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto" -ConfigurationName "CertAuthConfig" | Select-Object -ExpandProperty "Status"
+    Start-Sleep -Seconds 3
+} until ($StatusJob1 -eq "Completed")
+
 Start-AzAutomationDscCompilationJob -ResourceGroupName 'infra' -AutomationAccountName "$Customer-auto" -ConfigurationName 'ClientConfig' -ConfigurationData $ConfigData
+do {
+    $StatusJob2 = Get-AzAutomationDscCompilationJob -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto" -ConfigurationName "ClientConfig" | Select-Object -ExpandProperty "Status"
+    Start-Sleep -Seconds 3
+} until ($StatusJob2 -eq "Completed")
 
 # Register Nodes
 # DC/CA
