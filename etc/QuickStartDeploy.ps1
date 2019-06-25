@@ -27,7 +27,7 @@ if ((Get-AzResourceGroup | where resourcegroupname -like $Customer) -ne $null)
 # Create Resource Group, deploy resources
 New-AzResourceGroup -Name $Customer -Location "East US" -Tag @{Engineer="$Engineer"}
 Write-Host "Kicking off the resource deployment to the new group which will take ~15 minutes."
-New-AzResourceGroupDeployment -Name 'init' -ResourceGroupName $Customer -TemplateUri 'https://raw.githubusercontent.com/huzzeytech/az-deploy/IdvAutoAcct/azuredeploy.json' -TemplateParameterObject @{envid="$Customer"}
+New-AzResourceGroupDeployment -Name 'init' -ResourceGroupName $Customer -TemplateUri 'https://raw.githubusercontent.com/huzzeytech/az-deploy/master/azuredeploy.json' -TemplateParameterObject @{envid="$Customer"}
 
 # Azure Automation AD/CA Registration
 Write-Host "Finished resource deployment, now registering machines to Azure Automation for configuration."
@@ -44,13 +44,13 @@ $ConfigData = @{
 }
 
 # Import DSC Modules
-New-AzAutomationModule -Name ActiveDirectoryCSDsc -ContentLinkUri "https://github.com/huzzeytech/az-deploy/raw/IdvAutoAcct/etc/ActiveDirectoryCSDsc.zip" -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto"
+New-AzAutomationModule -Name ActiveDirectoryCSDsc -ContentLinkUri "https://github.com/huzzeytech/az-deploy/raw/master/etc/ActiveDirectoryCSDsc.zip" -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto"
 do {
     $StatusMod1 = Get-AzAutomationModule -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto" | Where-Object {$_.Name -eq "ActiveDirectoryCSDsc"} | Select-Object -ExpandProperty "ProvisioningState"
     Start-Sleep -Seconds 3
 } until ($StatusMod1 -eq "Succeeded")
 
-New-AzAutomationModule -Name xPSDesiredStateConfiguration -ContentLinkUri "https://github.com/huzzeytech/az-deploy/raw/IdvAutoAcct/etc/xPSDesiredStateConfiguration.zip" -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto"
+New-AzAutomationModule -Name xPSDesiredStateConfiguration -ContentLinkUri "https://github.com/huzzeytech/az-deploy/raw/master/etc/xPSDesiredStateConfiguration.zip" -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto"
 do {
     $StatusMod2 = Get-AzAutomationModule -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto" | Where-Object {$_.Name -eq "xPSDesiredStateConfiguration"} | Select-Object -ExpandProperty "ProvisioningState"
     Start-Sleep -Seconds 3
