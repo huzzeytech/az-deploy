@@ -73,9 +73,9 @@ do {
 # DC/CA
 Write-Host "Waiting 5 minutes before registering machines."
 Start-Sleep -Seconds 300
-Register-AzAutomationDscNode -AutomationAccountName "$Customer-auto" -ResourceGroupName "infra" -AzureVMResourceGroup "$Customer" -AzureVMName "$Customer-dc1" -ActionAfterReboot "ContinueConfiguration" -RebootNodeIfNeeded $True  -NodeConfigurationName "CertAuthConfig.localhost"
+Register-AzAutomationDscNode -AutomationAccountName "$Customer-auto" -ResourceGroupName "infra" -AzureVMResourceGroup "$Customer" -AzureVMName "$Customer-dc1" -ActionAfterReboot "ContinueConfiguration" -RebootNodeIfNeeded $True -AllowModuleOverwrite $True -NodeConfigurationName "CertAuthConfig.localhost"
 # Windows 10 Client
-Register-AzAutomationDscNode -AutomationAccountName "$Customer-auto" -ResourceGroupName "infra" -AzureVMResourceGroup "$Customer" -AzureVMName "$Customer-client" -ActionAfterReboot "ContinueConfiguration" -RebootNodeIfNeeded $True  -NodeConfigurationName "ClientConfig.localhost"
+Register-AzAutomationDscNode -AutomationAccountName "$Customer-auto" -ResourceGroupName "infra" -AzureVMResourceGroup "$Customer" -AzureVMName "$Customer-client" -ActionAfterReboot "ContinueConfiguration" -RebootNodeIfNeeded $True -AllowModuleOverwrite $True -NodeConfigurationName "ClientConfig.localhost"
 # After reg finished...wait 15 min or poll for DSC Status
 
 Write-Host "Successful deployment. Please RDP to your Windows 10 client to confirm configuration: $customer.yubi.fun"
