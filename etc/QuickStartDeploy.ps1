@@ -30,7 +30,7 @@ Write-Host "Kicking off the resource deployment to the new group which will take
 New-AzResourceGroupDeployment -Name 'init' -ResourceGroupName $Customer -TemplateUri 'https://raw.githubusercontent.com/huzzeytech/az-deploy/master/azuredeploy.json' -TemplateParameterObject @{envid="$Customer"}
 
 # Azure Automation AD/CA Registration
-Write-Host "Finished resource deployment, now registering machines to Azure Automation for configuration."
+Write-Host "Finished resource deployment, preparing Azure Automation for Registration."
 
 # Parameters for Compilation Jobs
 $Params = @{"credname"="$Customer-yubi"}
@@ -71,6 +71,8 @@ do {
 
 # Register Nodes
 # DC/CA
+Write-Host "Waiting 5 minutes before registering machines."
+Start-Sleep -Seconds 300
 Register-AzAutomationDscNode -AutomationAccountName "$Customer-auto" -ResourceGroupName "infra" -AzureVMResourceGroup "$Customer" -AzureVMName "$Customer-dc1" -ActionAfterReboot "ContinueConfiguration" -RebootNodeIfNeeded $True  -NodeConfigurationName "CertAuthConfig.localhost"
 # Windows 10 Client
 Register-AzAutomationDscNode -AutomationAccountName "$Customer-auto" -ResourceGroupName "infra" -AzureVMResourceGroup "$Customer" -AzureVMName "$Customer-client" -ActionAfterReboot "ContinueConfiguration" -RebootNodeIfNeeded $True  -NodeConfigurationName "ClientConfig.localhost"
