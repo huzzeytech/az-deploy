@@ -4,6 +4,7 @@
 # --------------------
 
 # Get engineer name for tagging, and customer for unique identifier
+$StopWatch = [System.Diagnostics.Stopwatch]::StartNew()
 $Engineer = Read-Host -Prompt 'Enter your first name for tagging purposes'
 $Customer = Read-Host -Prompt 'Enter customer ID <= 6 characters'
 $Customer = $Customer.ToLower()
@@ -78,6 +79,13 @@ Register-AzAutomationDscNode -AutomationAccountName "$Customer-auto" -ResourceGr
 # Windows 10 Client
 Write-Host "Registering Client..."
 Register-AzAutomationDscNode -AutomationAccountName "$Customer-auto" -ResourceGroupName "infra" -AzureVMResourceGroup "$Customer" -AzureVMName "$Customer-client" -ActionAfterReboot "ContinueConfiguration" -RebootNodeIfNeeded $True -AllowModuleOverwrite $True -NodeConfigurationName "ClientConfig.localhost"
-# After reg finished...wait 15 min or poll for DSC Status
+# Post Registration, wait 15 minutes to accomodate validation of resources
+Start-Sleep -Seconds 960
+Write-Host "Restarting VMs..."
+Get-AzVM -ResourceGroupName "$Customer" | Restart-AzVM
+Start-Sleep -Seconds 180
 
-Write-Host "Successful deployment. Please RDP to your Windows 10 client to confirm configuration: $customer.yubi.fun"
+# Calculate Time for Deployment
+$StopWatch.Stop()
+$TotalTime = [math]::Round($StopWatch.Elapsed.TotalMinutes,2)
+Write-Host "This deployment took $TotalTime minutes to run. Please RDP to your Windows 10 client: $customer.yubi.fun"
