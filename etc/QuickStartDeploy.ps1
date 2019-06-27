@@ -73,8 +73,10 @@ do {
 # DC/CA
 Write-Host "Waiting 5 minutes before registering machines."
 Start-Sleep -Seconds 300
+Write-Host "Registering DC/CA..."
 Register-AzAutomationDscNode -AutomationAccountName "$Customer-auto" -ResourceGroupName "infra" -AzureVMResourceGroup "$Customer" -AzureVMName "$Customer-dc1" -ActionAfterReboot "ContinueConfiguration" -RebootNodeIfNeeded $True -AllowModuleOverwrite $True -NodeConfigurationName "CertAuthConfig.localhost"
 # Windows 10 Client
+Write-Host "Registering Client..."
 Register-AzAutomationDscNode -AutomationAccountName "$Customer-auto" -ResourceGroupName "infra" -AzureVMResourceGroup "$Customer" -AzureVMName "$Customer-client" -ActionAfterReboot "ContinueConfiguration" -RebootNodeIfNeeded $True -AllowModuleOverwrite $True -NodeConfigurationName "ClientConfig.localhost"
 # After reg finished...wait 15 min or poll for DSC Status
 
