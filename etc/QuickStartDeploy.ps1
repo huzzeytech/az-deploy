@@ -27,7 +27,7 @@ if ((Get-AzResourceGroup | where resourcegroupname -like $Customer) -ne $null)
 
 # Create Resource Group, deploy resources
 New-AzResourceGroup -Name $Customer -Location "East US" -Tag @{Engineer="$Engineer"}
-Write-Host "Kicking off the resource deployment to the new group which will take ~15 minutes."
+Write-Host "Kicking off the resource deployment to the new group which will take ~55 minutes."
 New-AzResourceGroupDeployment -Name 'init' -ResourceGroupName $Customer -TemplateUri 'https://raw.githubusercontent.com/huzzeytech/az-deploy/master/azuredeploy.json' -TemplateParameterObject @{envid="$Customer"}
 
 # Azure Automation AD/CA Registration
@@ -64,7 +64,7 @@ do {
     Start-Sleep -Seconds 3
 } until ($StatusJob1 -eq "Completed")
 
-Start-AzAutomationDscCompilationJob -ResourceGroupName 'infra' -AutomationAccountName "$Customer-auto" -ConfigurationName 'ClientConfig' -ConfigurationData $ConfigData
+Start-AzAutomationDscCompilationJob -ResourceGroupName 'infra' -AutomationAccountName "$Customer-auto" -ConfigurationName 'ClientConfig' -ConfigurationData $ConfigData -Parameters $Params
 do {
     $StatusJob2 = Get-AzAutomationDscCompilationJob -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto" -ConfigurationName "ClientConfig" | Select-Object -ExpandProperty "Status"
     Start-Sleep -Seconds 3
@@ -72,15 +72,15 @@ do {
 
 # Register Nodes
 # DC/CA
-Write-Host "Waiting 5 minutes before registering machines."
-Start-Sleep -Seconds 300
+Write-Host "Waiting 3 minutes before registering machines."
+Start-Sleep -Seconds 180
 Write-Host "Registering DC/CA..."
 Register-AzAutomationDscNode -AutomationAccountName "$Customer-auto" -ResourceGroupName "infra" -AzureVMResourceGroup "$Customer" -AzureVMName "$Customer-dc1" -ActionAfterReboot "ContinueConfiguration" -RebootNodeIfNeeded $True -AllowModuleOverwrite $True -NodeConfigurationName "CertAuthConfig.localhost"
 # Windows 10 Client
 Write-Host "Registering Client..."
 Register-AzAutomationDscNode -AutomationAccountName "$Customer-auto" -ResourceGroupName "infra" -AzureVMResourceGroup "$Customer" -AzureVMName "$Customer-client" -ActionAfterReboot "ContinueConfiguration" -RebootNodeIfNeeded $True -AllowModuleOverwrite $True -NodeConfigurationName "ClientConfig.localhost"
 # Post Registration, wait 15 minutes to accomodate validation of resources
-Start-Sleep -Seconds 960
+Start-Sleep -Seconds 1080
 Write-Host "Restarting VMs..."
 Get-AzVM -ResourceGroupName "$Customer" | Restart-AzVM
 Start-Sleep -Seconds 180

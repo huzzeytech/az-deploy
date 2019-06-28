@@ -1,5 +1,12 @@
 Configuration ClientConfig
 {
+    # Get Domain Admin Credential from Azure Automation Credential Storage
+    param(
+        [String]
+        $credname
+    )
+    $domainCredential = Get-AutomationPSCredential $credname
+
     Import-DscResource -ModuleName 'PSDesiredStateConfiguration'
    
     Node localhost
@@ -43,6 +50,7 @@ Configuration ClientConfig
                 Get-Service -Name "Scardsvr" | Set-Service -StartupType Automatic
             }
             TestScript = { Test-Path "C:\temp" }
+            Credential = $domainCredential
         }
         Script DisableNLA
         {

@@ -1,11 +1,10 @@
 Configuration CertAuthConfig
 {
-    # Parameter help description
+    # Get Domain Admin Credential from Azure Automation Credential Storage
     param(
         [String]
         $credname
     )
-
     $domainCredential = Get-AutomationPSCredential $credname
 
     Import-DscResource -ModuleName ActiveDirectoryCSDsc
