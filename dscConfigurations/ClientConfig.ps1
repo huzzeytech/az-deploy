@@ -49,7 +49,7 @@ Configuration ClientConfig
                 #enable the Smart Card Service
                 Get-Service -Name "Scardsvr" | Set-Service -StartupType Automatic
             }
-            TestScript = { Test-Path "C:\temp" }
+            TestScript = { Test-Path 'HKLM:\SOFTWARE\Microsoft\Cryptography\Calais\SmartCards\YubiKey Smart Card' }
             Credential = $domainCredential
         }
         Script DisableNLA
