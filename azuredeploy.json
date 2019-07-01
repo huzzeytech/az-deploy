@@ -80,7 +80,7 @@
         "vmname": "[concat(parameters('envid'), '-dc1')]",
         "clientname": "[concat(parameters('envid'), '-client')]",
         "clientpubipId": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', variables('clientpubipName'))]",
-        "storageName": "[concat('sa', parameters('envid'))]",
+        "storageName": "[toLower(concat(parameters('envid'), uniqueString(resourceGroup().id, deployment().name)))]",
         "scriptParameters": "[concat('-CustomDomain ', parameters('envid'))]",
         "scriptFileName": "init-domain.ps1",
         "dnsResourceGroup": "infra",
