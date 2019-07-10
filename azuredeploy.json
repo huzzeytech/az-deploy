@@ -130,7 +130,6 @@
             "apiVersion": "2018-10-01",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]",
                 "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]",
                 "[concat('Microsoft.Network/publicIpAddresses/', variables('vmpubipName'))]"
             ],
@@ -149,10 +148,7 @@
                             }
                         }
                     }
-                ],
-                "networkSecurityGroup": {
-                    "id": "[variables('nsgId')]"
-                }
+                ]
             },
             "tags": {
                 "Project": "yubi-azure"
