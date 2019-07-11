@@ -46,8 +46,7 @@
             "defaultValue": "BadAdmin"
         },
         "adminPassword": {
-            "type": "securestring",
-            "defaultValue": "BadAdminPass123"
+            "type": "securestring"
         },
         "diagnosticsStorageAccountType": {
             "type": "string",
