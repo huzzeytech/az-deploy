@@ -8,8 +8,10 @@ $StopWatch = [System.Diagnostics.Stopwatch]::StartNew()
 $Engineer = Read-Host -Prompt 'Enter your first name for tagging purposes'
 $Customer = Read-Host -Prompt 'Enter customer ID <= 6 characters'
 $Customer = $Customer.ToLower()
+# Generate a random admin password
 $Password = ([char[]]([char]33..[char]95) + ([char[]]([char]97..[char]126)) + 0..9 | Sort-Object {Get-Random})[0..12] -join ''
 
+# Ensure both required variables are present
 if ($Engineer -and $Customer)
 {
     Write-Host "First up, a resource group for $customer..."
@@ -58,7 +60,7 @@ do {
     Start-Sleep -Seconds 3
 } until ($StatusMod2 -eq "Succeeded")
 
-# Compilation Jobs
+# Create Compilation Jobs to prep configuration for nodes
 Start-AzAutomationDscCompilationJob -ResourceGroupName 'infra' -AutomationAccountName "$Customer-auto" -ConfigurationName "CertAuthConfig" -ConfigurationData $ConfigData -Parameters $Params
 do {
     $StatusJob1 = Get-AzAutomationDscCompilationJob -ResourceGroupName "infra" -AutomationAccountName "$Customer-auto" -ConfigurationName "CertAuthConfig" | Select-Object -ExpandProperty "Status"
@@ -71,7 +73,7 @@ do {
     Start-Sleep -Seconds 3
 } until ($StatusJob2 -eq "Completed")
 
-# Register Nodes
+# Register Nodes to Azure Automation and apply configurations
 # DC/CA
 Write-Host "Waiting 3 minutes before registering machines."
 Start-Sleep -Seconds 180
@@ -89,4 +91,4 @@ Start-Sleep -Seconds 180
 # Calculate Time for Deployment
 $StopWatch.Stop()
 $TotalTime = [math]::Round($StopWatch.Elapsed.TotalMinutes,2)
-Write-Host "This deployment took $TotalTime minutes to run. Please RDP to your Windows 10 client: $customer.yubi.fun"
+Write-Host "This deployment took $TotalTime minutes to run. Please RDP to your Windows 10 client: $customer.yubi.fun with $password"
