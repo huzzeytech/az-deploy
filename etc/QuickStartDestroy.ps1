@@ -3,6 +3,8 @@
 # Company: Yubico
 # --------------------
 
+$StopWatch = [System.Diagnostics.Stopwatch]::StartNew()
+
 # Delete Resource Group
 $Customer = Read-Host -Prompt 'Enter customer ID'
 $Customer = $Customer.ToLower()
@@ -14,4 +16,6 @@ Remove-AzAutomationAccount -Name "$Customer-auto" -Force -ResourceGroupName "inf
 # Delete DNS Name
 Get-AzDnsRecordSet -ResourceGroupName "infra" -ZoneName "yubi.fun" -RecordType A -Name $Customer | Remove-AzDnsRecordSet
 
-Write-Host "The $customer environment was successfully deleted."
+$StopWatch.Stop()
+$TotalTime = [math]::Round($StopWatch.Elapsed.TotalMinutes,2)
+Write-Host "The $customer environment was successfully deleted in $TotalTime minutes."
