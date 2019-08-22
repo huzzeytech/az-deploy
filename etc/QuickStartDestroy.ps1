@@ -8,7 +8,13 @@ $StopWatch = [System.Diagnostics.Stopwatch]::StartNew()
 # Delete Resource Group
 $Customer = Read-Host -Prompt 'Enter customer ID'
 $Customer = $Customer.ToLower()
-Get-AzResourceGroup -Name $Customer | Remove-AzResourceGroup -Verbose -Force
+try{
+    Get-AzResourceGroup -Name $Customer | Remove-AzResourceGroup -Verbose -Force
+}
+catch
+{
+
+}
 
 # Delete Automation Account
 Remove-AzAutomationAccount -Name "$Customer-auto" -Force -ResourceGroupName "infra"
