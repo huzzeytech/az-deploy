@@ -37,7 +37,7 @@
             "type": "string",
             "defaultValue": "Premium_LRS"
         },
-        "virtualMachineSize": {
+        "vmSize": {
             "type": "string",
             "defaultValue": "Standard_D2s_v3"
         },
@@ -263,7 +263,7 @@
             ],
             "properties": {
                 "hardwareProfile": {
-                    "vmSize": "[parameters('virtualMachineSize')]"
+                    "vmSize": "[parameters('vmSize')]"
                 },
                 "storageProfile": {
                     "imageReference": {
@@ -318,7 +318,7 @@
             ],   
             "properties": {
                 "hardwareProfile": {
-                    "vmSize": "[parameters('virtualMachineSize')]"
+                    "vmSize": "[parameters('vmSize')]"
                 },
                 "storageProfile": {
                     "imageReference": {
