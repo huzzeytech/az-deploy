@@ -74,7 +74,6 @@
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
         "vmnic": "[concat(parameters('envid'), '-dcnic1')]",
         "clientnic": "[concat(parameters('envid'), '-clientnic1')]",
-        "vmpubipName": "[concat(parameters('envid'), '-dcip1')]",
         "clientpubipName": "[concat(parameters('envid'), '-clientip1')]",
         "vmname": "[concat(parameters('envid'), '-dc1')]",
         "clientname": "[concat(parameters('envid'), '-client')]",
@@ -129,8 +128,7 @@
             "apiVersion": "2018-10-01",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]",
-                "[concat('Microsoft.Network/publicIpAddresses/', variables('vmpubipName'))]"
+                "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]"
             ],
             "properties": {
                 "ipConfigurations": [
@@ -141,10 +139,7 @@
                                 "id": "[variables('subnetRef')]"
                             },
                             "privateIPAddress": "10.0.16.5",
-                            "privateIPAllocationMethod": "Static",
-                            "publicIpAddress": {
-                                "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', variables('vmpubipName'))]"
-                            }
+                            "privateIPAllocationMethod": "Static"
                         }
                     }
                 ]
@@ -243,21 +238,6 @@
             }
         },
         {
-            "name": "[variables('vmpubipname')]",
-            "type": "Microsoft.Network/publicIpAddresses",
-            "apiVersion": "2018-08-01",
-            "location": "[parameters('location')]",
-            "properties": {
-                "publicIpAllocationMethod": "[parameters('publicIpAddressType')]"
-            },
-            "sku": {
-                "name": "[parameters('publicIpAddressSku')]"
-            },
-            "tags": {
-                "Project": "yubi-azure"
-            }
-        },
-        {
             "name": "[variables('clientpubipname')]",
             "type": "Microsoft.Network/publicIpAddresses",
             "apiVersion": "2018-08-01",
@@ -289,11 +269,14 @@
                     "imageReference": {
                         "publisher": "MicrosoftWindowsServer",
                         "offer": "WindowsServer",
-                        "sku": "2016-Datacenter",
+                        "sku": "2016-Datacenter-smalldisk",
                         "version": "latest"
                     },
                     "osDisk": {
-                        "createOption": "FromImage"
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "[parameters('osDiskType')]"
+                        }
                     }
                 },
                 "networkProfile": {
