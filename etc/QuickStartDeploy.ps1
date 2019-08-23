@@ -12,12 +12,12 @@ $Customer = $Customer.ToLower()
 $Password = ([char[]]([char]33..[char]95) + ([char[]]([char]97..[char]126)) + 0..9 | Sort-Object {Get-Random})[0..12] -join ''
 
 # Ensure both required variables are present
-if ($Engineer -and $Customer)
+if ($Engineer -and $Customer -and $Customer.Length -le 6 -and $Customer.Length -ge 1)
 {
     Write-Host "First up, a resource group for $customer..."
 }
 else {
-    Write-Warning 'Values cannot be null.'
+    Write-Warning 'Either you forgot to supply a value or the customer ID is not 1-6 characters.'
     break
 }
 
