@@ -9,10 +9,6 @@
             "type": "string",
             "defaultValue": "eastus"
         },
-        "networkInterfaceName": {
-            "type": "string",
-            "defaultValue": "dc1nic"
-        },
         "networkSecurityGroupName": {
             "type": "string",
             "defaultValue": "dc1-nsg"
@@ -55,10 +51,6 @@
         "diagnosticsStorageAccountKind": {
             "type": "string",
             "defaultValue": "Storage"
-        },
-        "nodeConfigurationName": {
-            "type": "string",
-            "defaultValue": "CertAuthConfig.localhost"
         },
         "_artifactsLocation": {
             "type": "string",
